@@ -1,0 +1,79 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <h1>Sistema Venta</h1>
+    <button mat-icon-button (click)="sidenav.toggle();">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav #sidenav opened="true" mode="side" style="width: 200px;">
+    <mat-nav-list>
+
+      <mat-list-item routerLink="/pages/dashboard" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">dashboard</mat-icon>
+          <div mat-line class="texto">DashBoard</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/usuarios" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">group</mat-icon>
+          <div mat-line class="texto">Usuarios</div>
+        </div>
+
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/productos" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">store</mat-icon>
+          <div mat-line class="texto">Productos</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/inventario" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">assignment</mat-icon>
+          <div mat-line class="texto">Inventario</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/venta" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">shopping_cart</mat-icon>
+          <div mat-line class="texto">Venta</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/historial-venta" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">edit_note</mat-icon>
+          <div mat-line class="texto">Historial Venta</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/clientes" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">person</mat-icon>
+          <div mat-line class="texto">Clientes</div>
+        </div>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/pages/reportes" class="item">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono">receipt</mat-icon>
+          <div mat-line class="texto">Reportes</div>
+        </div>
+      </mat-list-item>
+
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div style="height: 90vh;">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

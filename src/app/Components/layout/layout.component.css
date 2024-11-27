@@ -1,0 +1,13 @@
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.icono {
+  margin-right: 15px; /* Espacio entre el icono y el texto */
+}
+
+.texto {
+  display: inline-flex;
+  align-items: center;
+}
