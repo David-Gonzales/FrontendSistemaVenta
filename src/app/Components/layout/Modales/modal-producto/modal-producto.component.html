@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>{{tituloAccion}} Producto</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="formularioProducto">
+    <mat-grid-list cols="1" rowHeight="80px">
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput autocomplete="off" formControlName="nombre">
+          <mat-icon matSuffix>store</mat-icon>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Capacidad</mat-label>
+          <input matInput autocomplete="off" formControlName="capacidad">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Unidad</mat-label>
+          <input matInput autocomplete="off" formControlName="unidad">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Stock</mat-label>
+          <input matInput autocomplete="off" formControlName="stock">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Precio</mat-label>
+          <input matInput autocomplete="off" formControlName="precio">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="esActivo">
+            <mat-option [value]="true">Disponible</mat-option>
+            <mat-option [value]="false">No Disponible</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button matDialogClose color="warn">Volver</button>
+  <button mat-raised-button color="primary"
+    [disabled]="formularioProducto.invalid"
+    (click)="guardarEditar_Producto()"
+  >{{botonAccion}}</button>
+</mat-dialog-actions>

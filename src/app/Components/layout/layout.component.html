@@ -4,6 +4,19 @@
     <button mat-icon-button (click)="sidenav.toggle();">
       <mat-icon>menu</mat-icon>
     </button>
+
+    <!-- Spacer para empujar elementos hacia la derecha -->
+    <span class="spacer"></span>
+
+    <!-- Información del usuario -->
+    <span class="user-info">
+      {{ nombreUsuario }} | {{ rol }}
+    </span>
+
+    <!-- Botón de cierre de sesión -->
+    <button mat-icon-button (click)="cerrarSesion()">
+      <mat-icon>logout</mat-icon>
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>
 

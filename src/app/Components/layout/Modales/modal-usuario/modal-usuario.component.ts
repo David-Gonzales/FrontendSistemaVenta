@@ -40,7 +40,7 @@ export class ModalUsuarioComponent {
       correo:['',Validators.required],
       clave:['',Validators.required],
       idRol:['',Validators.required],
-      esActivo:['1',Validators.required],
+      esActivo:['true',Validators.required],
     });
 
     if(this.datosUsuario != null){
@@ -78,9 +78,7 @@ export class ModalUsuarioComponent {
 
 
   guardarEditar_Usuario(){
-    console.log(this.datosUsuario);
-    console.log(this.datosUsuario.id);
-    if(this.datosUsuario != null){
+    if(this.datosUsuario != null && this.datosUsuario.id){
       const _usuarioModificado: UsuarioUpdateModel ={
         Id: this.datosUsuario.id,
         Nombres: this.formularioUsuario.value.nombres,
@@ -89,7 +87,7 @@ export class ModalUsuarioComponent {
         Correo: this.formularioUsuario.value.correo,
         Clave: this.formularioUsuario.value.clave,
         IdRol: this.formularioUsuario.value.idRol,
-        EsActivo: this.formularioUsuario.value.esActivo
+        EsActivo: Boolean (this.formularioUsuario.value.esActivo)
       }
       this._usuarioServicio.editar(_usuarioModificado).subscribe({
         next:(respuesta)=>{
@@ -110,7 +108,7 @@ export class ModalUsuarioComponent {
         Correo: this.formularioUsuario.value.correo,
         Clave: this.formularioUsuario.value.clave,
         IdRol: this.formularioUsuario.value.idRol,
-        EsActivo: this.formularioUsuario.value.esActivo
+        EsActivo: Boolean(this.formularioUsuario.value.esActivo)
       }
       this._usuarioServicio.guardar(_usuarioCreado).subscribe({
         next:(respuesta)=>{

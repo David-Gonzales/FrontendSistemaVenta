@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>{{tituloAccion}} Usuario</h2>
+<h2 mat-dialog-title>{{tituloAccion}} Cliente</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="formularioUsuario">
+  <form [formGroup]="formularioCliente">
     <mat-grid-list cols="1" rowHeight="80px">
 
       <mat-grid-tile>
@@ -22,9 +22,33 @@
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
-          <mat-label>Teléfono</mat-label>
-          <input matInput autocomplete="off" formControlName="telefono">
-          <mat-icon matSuffix>phone</mat-icon>
+          <mat-label>Tipo Documento</mat-label>
+          <input matInput autocomplete="off" formControlName="tipoDocumento">
+          <mat-icon matSuffix>assignment</mat-icon>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Número Documento</mat-label>
+          <input matInput autocomplete="off" formControlName="numeroDocumento">
+          <mat-icon matSuffix>assignment_ind</mat-icon>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Ciudad</mat-label>
+          <input matInput autocomplete="off" formControlName="ciudad">
+          <mat-icon matSuffix>map</mat-icon>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input matInput autocomplete="off" formControlName="fechaNacimiento">
+          <mat-icon matSuffix>date_range</mat-icon>
         </mat-form-field>
       </mat-grid-tile>
 
@@ -38,24 +62,12 @@
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
-          <mat-label>Contraseña</mat-label>
-          <input matInput [type]="ocultarPassword ? 'password' : 'text'" formControlName="clave">
-            <button mat-icon-button matSuffix (click) = "ocultarPassword =!ocultarPassword" type="button">
-          <mat-icon matSuffix>{{ocultarPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
+          <mat-label>Telefono</mat-label>
+          <input matInput autocomplete="off" formControlName="telefono">
+          <mat-icon matSuffix>phone</mat-icon>
         </mat-form-field>
       </mat-grid-tile>
 
-      <mat-grid-tile>
-        <mat-form-field appearance="outline">
-          <mat-label>Rol</mat-label>
-          <mat-select formControlName="idRol">
-            <mat-option *ngFor="let item of listaRoles" [value]="item.id">
-              {{item.nombre}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-grid-tile>
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
@@ -74,7 +86,7 @@
 <mat-dialog-actions align="end">
   <button mat-raised-button matDialogClose color="warn">Volver</button>
   <button mat-raised-button color="primary"
-    [disabled]="formularioUsuario.invalid"
-    (click)="guardarEditar_Usuario()"
+    [disabled]="formularioCliente.invalid"
+    (click)="guardarEditar_Cliente()"
   >{{botonAccion}}</button>
 </mat-dialog-actions>

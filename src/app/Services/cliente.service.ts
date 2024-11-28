@@ -34,6 +34,6 @@ export class ClienteService {
   }
 
   eliminar(id:number):Observable<Response<number>>{
-    return this.http.delete<Response<number>>(`${this.urlApi}Eliminar/${id}`);
+    return this.http.delete<Response<number>>(`${this.urlApi}Eliminar?id=${id}`);
   }
 }
