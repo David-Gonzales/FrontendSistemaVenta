@@ -34,7 +34,7 @@ export class ModalClienteComponent {
       tipoDocumento:['',Validators.required],
       numeroDocumento:['',Validators.required],
       ciudad:['',Validators.required],
-      fechaNacimiento:['',Validators.required],
+      fechaNacimiento:[null, Validators.required],
       correo:['',Validators.required],
       telefono:['',Validators.required],
       esActivo:['true',Validators.required],

@@ -1,1 +1,64 @@
-<p>historial-venta works!</p>
+<h1 style="margin: 20px 0px 0px 40px;">Historial Ventas</h1>
+
+<mat-card style="margin: 20px 40px 40px 40px;">
+  <mat-card-title style="margin: 20px;">
+    ?
+  </mat-card-title>
+
+  <mat-divider></mat-divider>
+
+  <mat-card-content class="historialVenta-card-content">
+
+    <div class="mat-elevation-z2">
+      <table mat-table [dataSource]="dataListaHistorialVentas">
+
+        <ng-container matColumnDef="fechaRegistro">
+          <th mat-header-cell *matHeaderCellDef>Fecha Registro</th>
+          <td mat-cell *matCellDef="let element"> {{element.fechaRegistro | date:'dd/MM/yyyy' }}  </td>
+        </ng-container>
+
+        <ng-container matColumnDef="horaRegistro">
+          <th mat-header-cell *matHeaderCellDef>Hora Registro</th>
+          <td mat-cell *matCellDef="let element"> {{element.fechaRegistro | date:'HH:mm' }}  </td>
+        </ng-container>
+
+        <ng-container matColumnDef="numeroVenta">
+          <th mat-header-cell *matHeaderCellDef>Número Venta</th>
+          <td mat-cell *matCellDef="let element"> {{element.numeroVenta}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoPago">
+          <th mat-header-cell *matHeaderCellDef>Tipo Pago</th>
+          <td mat-cell *matCellDef="let element"> {{element.tipoPago}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cliente">
+          <th mat-header-cell *matHeaderCellDef>Cliente</th>
+          <td mat-cell *matCellDef="let element"> {{element.nombreCliente + ' ' + element.apellidosCliente}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="verDetalleVenta(element)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+        <tr mat-row *matRowDef="let row; columns:columnasTabla;"></tr>
+
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons>
+      </mat-paginator>
+
+    </div>
+  </mat-card-content>
+</mat-card>

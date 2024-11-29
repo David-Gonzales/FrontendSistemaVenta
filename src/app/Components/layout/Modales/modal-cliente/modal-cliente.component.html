@@ -46,9 +46,13 @@
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
-          <mat-label>Fecha de Nacimiento</mat-label>
-          <input matInput autocomplete="off" formControlName="fechaNacimiento">
-          <mat-icon matSuffix>date_range</mat-icon>
+          <input matInput autocomplete="off"
+          placeholder="Fecha de Nacimiento (*)"
+          [matDatepicker]="dtpFechaNacimiento" formControlName="fechaNacimiento"
+          (click)="dtpFechaNacimiento.open()"
+          onfocus="dtpFechaNacimiento.open()">
+          <mat-datepicker-toggle matSuffix [for]="dtpFechaNacimiento"></mat-datepicker-toggle>
+          <mat-datepicker #dtpFechaNacimiento></mat-datepicker>
         </mat-form-field>
       </mat-grid-tile>
 
@@ -85,8 +89,6 @@
 
 <mat-dialog-actions align="end">
   <button mat-raised-button matDialogClose color="warn">Volver</button>
-  <button mat-raised-button color="primary"
-    [disabled]="formularioCliente.invalid"
-    (click)="guardarEditar_Cliente()"
-  >{{botonAccion}}</button>
+  <button mat-raised-button color="primary" [disabled]="formularioCliente.invalid"
+    (click)="guardarEditar_Cliente()">{{botonAccion}}</button>
 </mat-dialog-actions>
