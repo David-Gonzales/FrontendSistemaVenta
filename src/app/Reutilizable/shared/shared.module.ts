@@ -40,11 +40,24 @@ import { MatAutocompleteModule }  from '@angular/material/autocomplete';
 //Diálogo donde muestra el calendario
 import { MatDatepickerModule }  from '@angular/material/datepicker';
 //Soporte de manejo de fechas en componentes com el DatePicker (implementa un adaptador de fechas)
-import { MatNativeDateModule }  from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter }  from '@angular/material/core';
 //Cambiar el formato de las fechas
 import { MomentDateModule }  from '@angular/material-moment-adapter';
 //no sé xd??
 import { RouterModule } from '@angular/router'
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [],
@@ -77,11 +90,13 @@ import { RouterModule } from '@angular/router'
     MatDatepickerModule,
     MatNativeDateModule,
     MomentDateModule,
-    RouterModule
+    RouterModule,
+    MatFormFieldModule
   ],
   providers: [
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    provideNativeDateAdapter(MY_FORMATS)
   ]
 })
 export class SharedModule { }

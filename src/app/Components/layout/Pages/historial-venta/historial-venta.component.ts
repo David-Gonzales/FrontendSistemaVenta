@@ -22,6 +22,8 @@ export class HistorialVentaComponent implements AfterViewInit{
   dataListaHistorialVentas: MatTableDataSource<HistorialVenta> = new MatTableDataSource(this.dataInicio);
   @ViewChild(MatPaginator) paginacionTabla! : MatPaginator;
 
+  fechaInicio:Date = new Date();
+
   constructor(
     private dialog: MatDialog,
     private _ventaServicio: VentaService,

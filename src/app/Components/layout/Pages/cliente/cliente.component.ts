@@ -9,7 +9,6 @@ import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 import { ModalClienteComponent } from '../../Modales/modal-cliente/modal-cliente.component';
 import Swal from 'sweetalert2';
 
-
 @Component({
   selector: 'app-cliente',
   standalone: true,

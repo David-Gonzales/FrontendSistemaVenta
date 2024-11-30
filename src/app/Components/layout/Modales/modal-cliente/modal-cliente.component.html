@@ -49,8 +49,7 @@
           <input matInput autocomplete="off"
           placeholder="Fecha de Nacimiento (*)"
           [matDatepicker]="dtpFechaNacimiento" formControlName="fechaNacimiento"
-          (click)="dtpFechaNacimiento.open()"
-          onfocus="dtpFechaNacimiento.open()">
+          (click)="dtpFechaNacimiento.open()">
           <mat-datepicker-toggle matSuffix [for]="dtpFechaNacimiento"></mat-datepicker-toggle>
           <mat-datepicker #dtpFechaNacimiento></mat-datepicker>
         </mat-form-field>

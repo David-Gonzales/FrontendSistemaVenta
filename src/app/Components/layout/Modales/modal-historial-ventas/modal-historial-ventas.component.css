@@ -1,0 +1,31 @@
+.detalleVenta-card-content{
+  padding-top: 10px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Cuatro columnas iguales */
+  gap: 20px; /* Espacio entre las tarjetas */
+  padding: 0 20px;
+}
+
+.grid-item {
+  background-color: #f9f9f9; /* Fondo claro */
+  padding: 15px;
+  border-radius: 8px; /* Bordes redondeados */
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+}
+
+.card-subtitle {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.card-value {
+  font-size: 18px;
+  color: #333;
+}

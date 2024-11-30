@@ -1,7 +1,25 @@
-<mat-card style="margin: 20px 40px 40px 40px;">
+<div style="margin: 20px">
   <mat-card-title style="margin: 20px;">Detalle Venta</mat-card-title>
-  <mat-divider></mat-divider>
+  <div class="grid-container">
+    <div class="grid-item">
+      <label class="card-subtitle">Fecha Registro</label>
+      <span class="card-value">{{fechaRegistro | date:'dd/MM/yyyy'}}</span>
+    </div>
+    <div class="grid-item">
+      <label class="card-subtitle">Número de venta</label>
+      <span class="card-value">{{numeroVenta}}</span>
+    </div>
+    <div class="grid-item">
+      <label class="card-subtitle">Tipo de pago</label>
+      <span class="card-value">{{tipoPago}}</span>
+    </div>
+    <div class="grid-item">
+      <label class="card-subtitle">Total</label>
+      <span class="card-value">{{total}}</span>
+    </div>
+  </div>
 
+  <mat-card-title style="margin: 20px;">Lista de Productos</mat-card-title>
   <mat-dialog-content class="detalleVenta-card-content">
     <div class="mat-elevation-z2">
       <table mat-table [dataSource]="dataListaDetalleVenta">
@@ -43,4 +61,4 @@
   <mat-dialog-actions align="end">
     <button mat-raised-button matDialogClose color="warn">Volver</button>
     </mat-dialog-actions>
-</mat-card>
+</div>
