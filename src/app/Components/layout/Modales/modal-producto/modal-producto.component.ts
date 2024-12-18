@@ -31,7 +31,7 @@ export class ModalProductoComponent {
       nombre:['', Validators.required],
       capacidad:['', Validators.required],
       unidad:['', Validators.required],
-      stock:['', Validators.required],
+      stock:[{ value: '', disabled: true}, Validators.required],
       precio:['', Validators.required],
       esActivo:['true', Validators.required],
     });
@@ -52,6 +52,8 @@ export class ModalProductoComponent {
         precio: this.datosProducto.precio,
         esActivo: this.datosProducto.esActivo
       });
+    }else{
+      this.formularioProducto.get('stock')?.enable();
     }
   }
 
