@@ -1,0 +1,21 @@
+.form-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas en la parte superior */
+  gap: 16px; /* Espacio entre los elementos */
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Espacio dentro de cada campo */
+}
+
+.add-btn {
+  align-self: center; /* Centra el botón */
+}
+
+/* Coloca los dos campos inferiores en una fila */
+.form-container > .form-item:nth-child(n+4) {
+  grid-column: span 3;
+}
+
