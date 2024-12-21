@@ -21,7 +21,7 @@ export class ProductoService {
   }
 
   obtener(id:number):Observable<Response<Producto>>{
-    return this.http.get<Response<Producto>>(`${this.urlApi}Obtener/${id}`);
+    return this.http.get<Response<Producto>>(`${this.urlApi}Obtener?id=${id}`);
   }
 
   guardar(request: ProductoModel):Observable<Response<number>>{

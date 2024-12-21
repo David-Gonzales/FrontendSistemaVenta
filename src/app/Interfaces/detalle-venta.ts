@@ -3,7 +3,7 @@ export type tipoEstado = "Lleno" | "Vacío";
 export interface DetalleVenta {
   id: number;
   cantidad: number;
-  tipoEstado: tipoEstado;
+  tipoEstado: string;
   precioUnitario: number;
   total: number;
 

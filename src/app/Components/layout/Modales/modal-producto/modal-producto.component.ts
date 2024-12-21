@@ -74,7 +74,7 @@ export class ModalProductoComponent {
             this._utilidadServicio.mostrarAlerta("El producto fue modificado", "Éxito");
             this.modalActual.close("true");
           } else {
-            this._utilidadServicio.mostrarAlerta("No se pudo modificar el usuario", "Error");
+            this._utilidadServicio.mostrarAlerta("No se pudo modificar el producto", "Error");
           }
         },
         error: (e) => { }
