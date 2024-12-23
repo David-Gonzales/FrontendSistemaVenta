@@ -13,9 +13,39 @@
   <br>
   <mat-card-content class="nuevaVenta-card-content">
     <form [formGroup]="formularioProductoVenta" (ngSubmit)="agregarProducto()">
+      <mat-grid-list cols="4" rowHeight="80px">
 
+        <mat-grid-tile [colspan]="2">
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%">
+            <mat-label>Selecciona un producto</mat-label>
+            <mat-select [(ngModel)]="productoSeleccionado" formControlName="producto">
+              <mat-option *ngFor="let item of listaProductos" [value]="item.id">
+                {{ item.nombre + ' ' + item.capacidad + ' ' + item.unidad}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="margin-left: 40px;">
+            <mat-label>Cantidad</mat-label>
+            <input [(ngModel)]="cantidad" matInput type="number" min="1">
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <button mat-raised-button color="primary"
+          (click)="agregarProducto()"
+          style="width: 80%;"
+          [disabled]="formularioProductoVenta.invalid">
+          <mat-icon mat-list-icon>add</mat-icon>
+          Agregar
+          </button>
+        </mat-grid-tile>
+
+      </mat-grid-list>
     </form>
-    <div class="form-container">
+    <!-- <div class="form-container">
       <div class="form-item">
         <mat-form-field>
           <mat-label>Selecciona un producto</mat-label>
@@ -59,7 +89,7 @@
       <button mat-raised-button color="primary" class="add-btn" (click)="agregarProducto()" [disabled]="!puedoAgregarProducto()">
         Agregar
       </button>
-    </div>
+    </div> -->
 
 
     <div class="mat-elevation-z2">
