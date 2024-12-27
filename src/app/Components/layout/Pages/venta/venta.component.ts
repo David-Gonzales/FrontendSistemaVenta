@@ -8,7 +8,7 @@ import { VentaService } from '../../../../Services/venta.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 
 import { Producto } from '../../../../Interfaces/producto';
-import { DetalleVenta } from '../../../../Interfaces/detalle-venta';
+import { DetalleVenta, tipoEstado } from '../../../../Interfaces/detalle-venta';
 
 import Swal from 'sweetalert2';
 
@@ -22,12 +22,7 @@ import Swal from 'sweetalert2';
 export class VentaComponent {
 
   columnasTabla: string[] = ['producto', 'cantidad', 'estado', 'precioUnitario', 'total', 'accion'];
-  // dataInicio: DetalleVenta[] = [];
-  // dataListaProductosVenta: MatTableDataSource<DetalleVenta> = new MatTableDataSource(this.dataInicio);
-
-  // productoSeleccionado!: Producto; // El operador ! se llama non-null assertion operator y se utiliza para indicarle al compilador que confías en que una variable nunca será null o undefined
-  productoSeleccionado: Producto | null = null
-  producto: Producto | null = null;
+  producto!: Producto; // El operador ! se llama non-null assertion operator y se utiliza para indicarle al compilador que confías en que una variable nunca será null o undefined
   listaProductos: Producto[] = []; // Se muestra en el combobox de "Selecciona un Producto"
   totalPagar: number = 0;
 
@@ -37,15 +32,13 @@ export class VentaComponent {
   bloquearBotonRegistrar: boolean = false;
 
   cantidad: number = 0;
-  tipoVenta: string[] = ["Normal", "Refill"];
-    precioRefill: number = 0;
-  tipoEstado: string ='';
+  tipoVenta: string = "";
+  precioRefill: number = 0;
+  tipoEstado: string = '';
   precioVacio: number = 0;
   tipoPago: string = '';
 
   formularioProductoVenta: FormGroup;
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +50,10 @@ export class VentaComponent {
 
     this.formularioProductoVenta = this.fb.group({
       producto: ['', Validators.required],
-      cantidad: ['', Validators.required]
+      cantidad: ['', Validators.required],
+      tipoVenta: ['', Validators.required],
+      tipoEstado: ['', Validators.required],
+      tipoPago: ['', Validators.required],
     });
 
     this._productoServicio.listar().subscribe({
@@ -65,7 +61,7 @@ export class VentaComponent {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             const lista = respuesta.data;
-            this.listaProductos = lista.filter(p=> p.esActivo == 1 && p.stock > 0);
+            this.listaProductos = lista.filter(p => p.esActivo == 1 && p.stock > 0);
           } else {
             console.error("La propiedad 'data' no es un arreglo de productos.");
           }
@@ -73,39 +69,26 @@ export class VentaComponent {
       },
       error: (e) => { }
     });
-
-    this._productoServicio.obtener(1).subscribe({
-      next: (respuesta) => {
-        if (respuesta.succeeded) {
-          if (Array.isArray(respuesta.data) && respuesta.data.length > 0) {
-            // Asignar el primer elemento si `data` es un array
-            this.producto = respuesta.data[0];
-          } else if (respuesta.data) {
-            // Asignar directamente si `data` es un objeto `Producto`
-            this.producto = respuesta.data as Producto;
-          } else {
-            console.error("La propiedad 'data' no contiene un producto válido...");
-          }
-        }
-      },
-      error: (e) => { }
-    });
-  }
-
-  puedoAgregarProducto(): boolean {
-    return !!this.productoSeleccionado && this.cantidad > 0 && !!this.tipoEstado && !!this.tipoPago;
   }
 
   agregarProducto() {
-    if (!this.productoSeleccionado || !this.puedoAgregarProducto()) {
+
+    // Obtén el id del producto seleccionado desde el formulario
+    const idProductoSeleccionado = this.formularioProductoVenta.value.producto;
+
+    // Busca el producto en la lista de productos
+    const productoSeleccionado = this.listaProductos.find(p => p.id === idProductoSeleccionado);
+
+    if (!productoSeleccionado) {
+      Swal.fire("Error", "Producto seleccionado no válido.", "warning");
       return;
     }
 
     // Verificar duplicados
     const productoDuplicado = this.listaProductosVenta.find(
       (detalle) =>
-        detalle.idProducto === this.productoSeleccionado?.id &&
-        detalle.tipoEstado === this.tipoEstado[0]
+        detalle.idProducto === productoSeleccionado.id &&
+        detalle.tipoEstado === this.tipoEstado
     );
 
     if (productoDuplicado) {
@@ -113,11 +96,13 @@ export class VentaComponent {
       return;
     }
 
-    const _cantidad:number = this.formularioProductoVenta.value.cantidad;
+    const _cantidad: number = this.formularioProductoVenta.value.cantidad;
+    const _tipoEstado: string = this.formularioProductoVenta.value.tipoEstado;
+
     // Cálculo del precio unitario según el estado
     const _precioUnitario =
       this.tipoEstado === "Lleno"
-        ? this.producto?.precio ?? 0 //operador de coalescencia nula (??) para proporcionar un valor predeterminado
+        ? productoSeleccionado.precio //operador de coalescencia nula (??) para proporcionar un valor predeterminado
         : this.precioVacio; // Usa el precio vacío si corresponde
 
     const _total = _cantidad * _precioUnitario;
@@ -129,36 +114,40 @@ export class VentaComponent {
     }
 
     const detalleVenta: DetalleVenta = {
-      id: this.producto?.id ?? 0, // Valor por defecto 0
+      id: 0, // Valor por defecto 0
       cantidad: _cantidad,
-      tipoEstado: this.tipoEstado,
+      tipoEstado: _tipoEstado,
       precioUnitario: _precioUnitario,
       total: _total,
 
-      idProducto: this.productoSeleccionado.id,
-      nombreProducto: this.productoSeleccionado.nombre,
-      capacidadProducto: this.productoSeleccionado.capacidad,
-      unidadProducto: this.productoSeleccionado.unidad,
+      idProducto: productoSeleccionado.id,
+      nombreProducto: productoSeleccionado.nombre,
+      capacidadProducto: productoSeleccionado.capacidad,
+      unidadProducto: productoSeleccionado.unidad,
     };
 
     this.listaProductosVenta.push(detalleVenta);
-    //this.dataListaProductosVenta.data = [...this.listaProductosVenta]; //algo falta aquí?
     this.dataListaProductosVenta = new MatTableDataSource(this.listaProductosVenta);
 
     Swal.fire("Éxito", "Producto agregado a la lista de venta.", "success");
     this.resetearSeleccionado();
   }
 
+
   removerProducto(detalleVenta: DetalleVenta) {
+    console.log(detalleVenta);
     this.totalPagar = this.totalPagar - detalleVenta.total;
-    const indice = this.listaProductosVenta.indexOf(detalleVenta);
+    const indice = this.listaProductosVenta.findIndex(
+      p => p.idProducto === detalleVenta.idProducto
+    );
+    console.log(indice);
     //PRIMERA FORMA
     if (indice > -1) {
       this.listaProductosVenta.splice(indice, 1);
     }
     //SEGUNDA FORMA
     //this.listaProductosVenta = this.listaProductosVenta.filter(p=> p.id != detalleVenta.idProducto);
-    //this.dataListaProductosVenta = new MatTableDataSource(this.listaProductosVenta);
+    this.dataListaProductosVenta = new MatTableDataSource(this.listaProductosVenta);
   }
 
   calcularTotal(): number {
@@ -173,7 +162,7 @@ export class VentaComponent {
         ...
       }
       */
-    }else{
+    } else {
       alert('Por favor, agregue al menos un producto');
       return;
     }
@@ -183,11 +172,10 @@ export class VentaComponent {
 
   resetearSeleccionado() {
     this.formularioProductoVenta.patchValue({
-      producto:'',
-      cantidad:'',//?
+      producto: 'x',
+      cantidad: 0,//?
+      tipoVenta: 'x',
+      tipoEstado: 'x',
     });
-    this.cantidad = 0;//?
-    this.tipoEstado = '';
-    this.tipoPago = '';
   }
 }
