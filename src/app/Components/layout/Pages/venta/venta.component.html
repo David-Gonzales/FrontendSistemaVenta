@@ -49,7 +49,7 @@
         <mat-grid-tile [colspan]="3">
           <mat-form-field class="full-width" appearance="fill" style="width: 100%">
             <mat-label>Tipo de venta</mat-label>
-            <mat-select formControlName="tipoVenta" [(value)]="tipoVenta">
+            <mat-select formControlName="tipoVenta" [(value)]="tipoVenta" (selectionChange)="onTipoVentaChange($event.value)">
               <mat-option value="Normal">Normal</mat-option>
               <mat-option value="Refill">Refill</mat-option>
             </mat-select>
@@ -59,9 +59,10 @@
         <mat-grid-tile [colspan]="3">
           <mat-form-field class="full-width" appearance="fill" style="width: 100%; margin-left: 40px;">
             <mat-label>Tipo de estado</mat-label>
-            <mat-select formControlName="tipoEstado" [(value)]="tipoEstado">
-              <mat-option value="Lleno">Lleno</mat-option>
-              <mat-option value="Vacio">Vacío</mat-option>
+            <mat-select formControlName="tipoEstado" [(value)]="tipoEstado" [disabled]="tipoVenta === 'Refill'">
+              <mat-option *ngIf="tipoVenta === 'Normal'" value="Lleno">Lleno</mat-option>
+              <mat-option *ngIf="tipoVenta === 'Normal'" value="Vacio">Vacío</mat-option>
+              <mat-option *ngIf="tipoVenta === 'Refill'" value="Lleno" selected>Lleno</mat-option>
             </mat-select>
           </mat-form-field>
         </mat-grid-tile>
@@ -84,6 +85,16 @@
         </mat-grid-tile>
 
       </mat-grid-list>
+
+      <mat-grid-list mat-grid-list cols="12" rowHeight="80px">
+        <mat-grid-tile [colspan]="3" *ngIf="tipoEstado === 'Vacio' || tipoVenta === 'Refill'">
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Nuevo Precio </mat-label>
+            <input formControlName="precioAdicional" matInput type="number" min="1">
+          </mat-form-field>
+        </mat-grid-tile>
+      </mat-grid-list>
+
     </form>
 
     <div class="mat-elevation-z2">
@@ -101,9 +112,14 @@
           <td mat-cell *matCellDef="let element"> {{element.cantidad}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="tipoVenta">
+          <th mat-header-cell *matHeaderCellDef>Tipo Venta</th>
+          <td mat-cell *matCellDef="let element"> {{element.tipoVenta}} </td>
+        </ng-container>
+
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef>Estado</th>
-          <td mat-cell *matCellDef="let element"> {{tipoEstado}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.tipoEstado}} </td>
         </ng-container>
 
         <ng-container matColumnDef="precioUnitario">

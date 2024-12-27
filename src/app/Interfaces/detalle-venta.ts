@@ -4,6 +4,7 @@ export interface DetalleVenta {
   id: number;
   cantidad: number;
   tipoEstado: string;
+  tipoVenta: string;
   precioUnitario: number;
   total: number;
 

@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
 })
 export class VentaComponent {
 
-  columnasTabla: string[] = ['producto', 'cantidad', 'estado', 'precioUnitario', 'total', 'accion'];
+  columnasTabla: string[] = ['producto', 'cantidad', 'tipoVenta', 'estado', 'precioUnitario', 'total', 'accion'];
   producto!: Producto; // El operador ! se llama non-null assertion operator y se utiliza para indicarle al compilador que confías en que una variable nunca será null o undefined
   listaProductos: Producto[] = []; // Se muestra en el combobox de "Selecciona un Producto"
   totalPagar: number = 0;
@@ -33,9 +33,8 @@ export class VentaComponent {
 
   cantidad: number = 0;
   tipoVenta: string = "";
-  precioRefill: number = 0;
+  precioAdicional: number = 0;
   tipoEstado: string = '';
-  precioVacio: number = 0;
   tipoPago: string = '';
 
   formularioProductoVenta: FormGroup;
@@ -54,6 +53,7 @@ export class VentaComponent {
       tipoVenta: ['', Validators.required],
       tipoEstado: ['', Validators.required],
       tipoPago: ['', Validators.required],
+      precioAdicional: [''],
     });
 
     this._productoServicio.listar().subscribe({
@@ -71,7 +71,28 @@ export class VentaComponent {
     });
   }
 
+  //Método para manejar cambios en tipo de venta:
+  onTipoVentaChange(tipoVenta: string) {
+    this.tipoVenta = tipoVenta;
+
+    if (tipoVenta === 'Refill') {
+      this.tipoEstado = 'Lleno'; // El estado es siempre "Lleno" en Refill.
+      this.formularioProductoVenta.controls['tipoEstado'].disable();
+      this.formularioProductoVenta.controls['precioAdicional'].setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      this.tipoEstado = ''; // Resetea el estado para ventas normales.
+      this.formularioProductoVenta.controls['tipoEstado'].enable();
+      this.formularioProductoVenta.controls['precioAdicional'].clearValidators();
+    }
+    this.formularioProductoVenta.controls['precioAdicional'].updateValueAndValidity();
+  }
+
   agregarProducto() {
+
+    if (this.formularioProductoVenta.invalid) {
+      this._utilidadServicio.mostrarAlerta('Por favor, completa todos los campos obligatorios.','Error');
+      return;
+    }
 
     // Obtén el id del producto seleccionado desde el formulario
     const idProductoSeleccionado = this.formularioProductoVenta.value.producto;
@@ -88,7 +109,8 @@ export class VentaComponent {
     const productoDuplicado = this.listaProductosVenta.find(
       (detalle) =>
         detalle.idProducto === productoSeleccionado.id &&
-        detalle.tipoEstado === this.tipoEstado
+        detalle.tipoEstado === this.tipoEstado &&
+        this.tipoVenta
     );
 
     if (productoDuplicado) {
@@ -99,16 +121,26 @@ export class VentaComponent {
     const _cantidad: number = this.formularioProductoVenta.value.cantidad;
     const _tipoEstado: string = this.formularioProductoVenta.value.tipoEstado;
 
-    // Cálculo del precio unitario según el estado
-    const _precioUnitario =
-      this.tipoEstado === "Lleno"
-        ? productoSeleccionado.precio //operador de coalescencia nula (??) para proporcionar un valor predeterminado
-        : this.precioVacio; // Usa el precio vacío si corresponde
+    let precioUnitario = 0;
+    // Ajustar el precio según el tipo de estado y venta
+    if (this.tipoVenta === 'Normal') {
+      if (this.tipoEstado === 'Lleno') {
+        precioUnitario = productoSeleccionado ? productoSeleccionado.precio : 0;
+      } else if (this.tipoEstado === 'Vacio') {
+        precioUnitario = this.formularioProductoVenta.value.precioAdicional || 0;
+      }
+    } else if (this.tipoVenta === 'Refill') {
+      precioUnitario = this.formularioProductoVenta.value.precioAdicional || 0;
+    }
+    // // Cálculo del precio unitario según el estado
+    // const _precioUnitario =
+    //   this.tipoEstado === "Lleno" ? productoSeleccionado.precio //operador de coalescencia nula (??) para proporcionar un valor predeterminado
+    //     : this.precioAdicional; // Usa el precio vacío si corresponde
 
-    const _total = _cantidad * _precioUnitario;
+    const _total = _cantidad * precioUnitario;
     this.totalPagar += _total;
 
-    if (!_precioUnitario || _precioUnitario <= 0) {
+    if (!precioUnitario || precioUnitario <= 0) {
       Swal.fire("Error", "El precio no puede ser cero o negativo.", "warning");
       return;
     }
@@ -116,8 +148,9 @@ export class VentaComponent {
     const detalleVenta: DetalleVenta = {
       id: 0, // Valor por defecto 0
       cantidad: _cantidad,
-      tipoEstado: _tipoEstado,
-      precioUnitario: _precioUnitario,
+      tipoEstado: this.tipoEstado,
+      tipoVenta: this.tipoVenta,
+      precioUnitario: precioUnitario,
       total: _total,
 
       idProducto: productoSeleccionado.id,
@@ -131,6 +164,7 @@ export class VentaComponent {
 
     Swal.fire("Éxito", "Producto agregado a la lista de venta.", "success");
     this.resetearSeleccionado();
+    this.tipoEstado = 'X';
   }
 
 
