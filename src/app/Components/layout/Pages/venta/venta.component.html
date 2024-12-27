@@ -44,7 +44,49 @@
         </mat-grid-tile>
 
       </mat-grid-list>
+
+      <mat-grid-list cols="4" rowHeight="80px">
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill">
+            <mat-label>Selecciona un tipo de venta</mat-label>
+            <mat-select [(ngModel)]="tipoVenta">
+              <mat-option value="Normal">Normal</mat-option>
+              <mat-option value="Refill">Refill</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill">
+            <mat-label>Selecciona un estado</mat-label>
+            <mat-select [(ngModel)]="tipoEstado">
+              <mat-option value="Lleno">Lleno</mat-option>
+              <mat-option value="Vacio">Vacío</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <!-- <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill">
+            <mat-label>Selecciona un método de pago</mat-label>
+            <mat-select [(ngModel)]="tipoPago">
+              <mat-option value="Lleno">Efectivo</mat-option>
+              <mat-option value="Vacio">Tarjeta</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile> -->
+
+        <mat-grid-tile>
+            <div>
+              <label> Total: </label>
+              <span> {{ totalPagar }}</span>
+            </div>
+        </mat-grid-tile>
+
+      </mat-grid-list>
     </form>
+
     <!-- <div class="form-container">
       <div class="form-item">
         <mat-form-field>
