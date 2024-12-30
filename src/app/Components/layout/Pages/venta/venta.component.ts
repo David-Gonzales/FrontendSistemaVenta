@@ -38,6 +38,7 @@ export class VentaComponent {
   tipoPago: string = '';
 
   formularioProductoVenta: FormGroup;
+  formularioClienteVenta: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +55,10 @@ export class VentaComponent {
       tipoEstado: ['', Validators.required],
       tipoPago: ['', Validators.required],
       precioAdicional: [''],
+    });
+
+    this.formularioClienteVenta = this.fb.group({
+      nombreCliente: [],
     });
 
     this._productoServicio.listar().subscribe({
