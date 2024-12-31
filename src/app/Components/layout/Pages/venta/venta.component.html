@@ -3,12 +3,36 @@
   <mat-card-title style="margin: 20px;">
     <h2>Cliente</h2>
   </mat-card-title>
-  <mat-divider></mat-divider>
+
   <mat-card-content class="cliente-card-content">
     <form [formGroup]="formularioClienteVenta">
+      <mat-grid-list cols="4" rowHeight="50px">
+        <mat-grid-tile [colspan]="1">
+          <button mat-raised-button color="primary" style="width: 100%; height: 50px;">
+            <mat-icon mat-list-icon>add</mat-icon>
+            Agregar
+          </button>
 
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="3">
+          <div style="width: 100%; height: 50px; align-content: space-around; margin-left: 30px; padding-left: 30px; background-color: #cccccc; border-radius: 5px 0px 0px 5px;">
+            <mat-label>José Ramírez Flores</mat-label>
+            <!-- <span> {{ nombreCliente }}</span> -->
+          </div>
+          <div style="background-color: #cccccc; margin-right: 30px; padding-right: 15px; height: 50px; border-radius: 0px 5px 5px 0px;">
+            <button mat-icon-button color="warn" class="add-btn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+        </mat-grid-tile>
+      </mat-grid-list>
     </form>
   </mat-card-content>
+
+  <br>
+  <mat-divider></mat-divider>
 
   <mat-card-title style="margin: 20px;">
     <h2>Venta</h2>
@@ -34,7 +58,7 @@
       <mat-grid-list cols="12" rowHeight="80px">
 
         <mat-grid-tile [colspan]="6">
-          <mat-form-field class="full-width" appearance="fill" style="width: 100% ; margin-right: 15px;">
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
             <mat-label>Selecciona un producto</mat-label>
             <mat-select formControlName="producto">
               <mat-option *ngFor="let item of listaProductos" [value]="item.id">
@@ -52,7 +76,8 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="3" style="transform: translateY(-10px);">
-          <button mat-raised-button color="primary" style="width: 80%; height: 73%;" [disabled]="formularioProductoVenta.invalid">
+          <button mat-raised-button color="primary" style="width: 80%; height: 73%;"
+            [disabled]="formularioProductoVenta.invalid">
             <mat-icon mat-list-icon>add</mat-icon>
             Agregar
           </button>
@@ -87,7 +112,7 @@
         <mat-grid-tile [colspan]="3"></mat-grid-tile>
 
         <mat-grid-tile [colspan]="3">
-          <div>
+          <div style="width: 80%; height: 50px; text-align: center; align-content: space-around; background-color: #cccccc; border-radius: 5px;">
             <label> Total: </label>
             <span> {{ totalPagar }}</span>
           </div>
