@@ -1,16 +1,16 @@
-export type tipoEstado = "Lleno" | "Vacío";
-
 export class DetalleVentaModel {
   IdProducto: number;
   Cantidad: number;
-  TipoEstado: tipoEstado;
+  TipoEstado: string;
+  TipoVenta: string;
   PrecioUnitario: number;
   Total: number;
 
   constructor(
     idProducto: number,
     cantidad: number,
-    tipoEstado: tipoEstado,
+    tipoEstado: string,
+    tipoVenta: string,
     precioUnitario: number,
     total: number
 
@@ -18,6 +18,7 @@ export class DetalleVentaModel {
     this.IdProducto = idProducto;
     this.Cantidad = cantidad;
     this.TipoEstado = tipoEstado;
+    this.TipoVenta = tipoVenta;
     this.PrecioUnitario = precioUnitario;
     this.Total = total;
   }

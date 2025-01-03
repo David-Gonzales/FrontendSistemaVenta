@@ -8,9 +8,14 @@ import { VentaService } from '../../../../Services/venta.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 
 import { Producto } from '../../../../Interfaces/producto';
-import { DetalleVenta, tipoEstado } from '../../../../Interfaces/detalle-venta';
+import { DetalleVenta } from '../../../../Interfaces/detalle-venta';
 
 import Swal from 'sweetalert2';
+import { ModalVentaClienteComponent } from '../../Modales/modal-venta-cliente/modal-venta-cliente.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Cliente } from '../../../../Interfaces/cliente';
+import { VentaModel } from '../../../../Models/ventaModel';
+import { DetalleVentaModel } from '../../../../Models/detalleVentaModel';
 
 @Component({
   selector: 'app-venta',
@@ -20,6 +25,10 @@ import Swal from 'sweetalert2';
   styleUrl: './venta.component.css'
 })
 export class VentaComponent {
+
+  clienteSeleccionado: Cliente | null = null;
+  nombreCompletoCliente: string = '';
+  idCliente: number = 0;
 
   columnasTabla: string[] = ['producto', 'cantidad', 'tipoVenta', 'estado', 'precioUnitario', 'total', 'accion'];
   producto!: Producto; // El operador ! se llama non-null assertion operator y se utiliza para indicarle al compilador que confías en que una variable nunca será null o undefined
@@ -38,9 +47,9 @@ export class VentaComponent {
   tipoPago: string = '';
 
   formularioProductoVenta: FormGroup;
-  formularioClienteVenta: FormGroup;
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private _productoServicio: ProductoService,
     private _ventaServicio: VentaService,
@@ -57,10 +66,6 @@ export class VentaComponent {
       precioAdicional: [''],
     });
 
-    this.formularioClienteVenta = this.fb.group({
-      nombreCliente: [],
-    });
-
     this._productoServicio.listar().subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
@@ -74,6 +79,26 @@ export class VentaComponent {
       },
       error: (e) => { }
     });
+  }
+
+  AgregarCliente() {
+    this.dialog.open(ModalVentaClienteComponent, {
+      disableClose: true
+    }).afterClosed().subscribe({
+      next: (resultado) => {
+        if (resultado) {
+          this.clienteSeleccionado = resultado.cliente;
+          this.nombreCompletoCliente = resultado.nombreCompleto;
+          this.idCliente = resultado.id;
+        }
+      },
+      error: (error) => { }
+    });
+  }
+
+  limpiarCliente(): void {
+    this.clienteSeleccionado = null;
+    this.nombreCompletoCliente = 'Seleccione un Cliente';
   }
 
   //Método para manejar cambios en tipo de venta:
@@ -95,7 +120,7 @@ export class VentaComponent {
   agregarProducto() {
 
     if (this.formularioProductoVenta.invalid) {
-      this._utilidadServicio.mostrarAlerta('Por favor, completa todos los campos obligatorios.','Error');
+      this._utilidadServicio.mostrarAlerta('Por favor, completa todos los campos obligatorios.', 'Error');
       return;
     }
 
@@ -167,9 +192,10 @@ export class VentaComponent {
     this.listaProductosVenta.push(detalleVenta);
     this.dataListaProductosVenta = new MatTableDataSource(this.listaProductosVenta);
 
-    Swal.fire("Éxito", "Producto agregado a la lista de venta.", "success");
+    // Swal.fire("Éxito", "Producto agregado a la lista de venta.", "success");
     this.resetearSeleccionado();
     this.tipoEstado = 'X';
+    this.bloquearBotonRegistrar = true;
   }
 
 
@@ -187,6 +213,10 @@ export class VentaComponent {
     //SEGUNDA FORMA
     //this.listaProductosVenta = this.listaProductosVenta.filter(p=> p.id != detalleVenta.idProducto);
     this.dataListaProductosVenta = new MatTableDataSource(this.listaProductosVenta);
+
+    if (this.listaProductosVenta.length == 0) {
+      this.bloquearBotonRegistrar = false;
+    }
   }
 
   calcularTotal(): number {
@@ -194,19 +224,53 @@ export class VentaComponent {
   }
 
   registrarVenta() {
-    if (this.listaProductosVenta.length > 0) {
-      this.bloquearBotonRegistrar = true;
-      /*
-      const request: Venta = {
-        ...
-      }
-      */
+
+    // Obtener el usuario desde el localStorage
+    const usuarioLocalStorage = localStorage.getItem('usuario');
+    let idUsuario = null;
+    if (usuarioLocalStorage) {
+      const usuario = JSON.parse(usuarioLocalStorage);
+      idUsuario = usuario.idUsuario;
     } else {
-      alert('Por favor, agregue al menos un producto');
-      return;
+      console.error('No se encontró el usuario en el localStorage.');
+      this._utilidadServicio.mostrarAlerta("No se encontró el usuario. Inicia sesión nuevamente.", "Error");
+      return; // Terminar la ejecución si no hay usuario
     }
 
-    console.log('Venta registrada');
+    const listaDetallesVenta = this.listaProductosVenta.map(dv => {
+      return new DetalleVentaModel(
+        dv.idProducto,
+        dv.cantidad,
+        dv.tipoEstado,
+        dv.tipoVenta,
+        dv.precioUnitario,
+        dv.total
+      );
+    });
+
+    const venta = new VentaModel(
+      this.tipoPago,
+      listaDetallesVenta,
+      this.idCliente,
+      idUsuario
+    );
+
+
+    if (venta != null) {
+      this._ventaServicio.guardar(venta).subscribe({
+        next: (respuesta) => {
+          if (respuesta.succeeded) {
+            Swal.fire("Éxito", "¡Venta registrada!", "success");
+          } else {
+            this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta", "Error");
+          }
+        },
+        error: () => {
+          this._utilidadServicio.mostrarAlerta("Error del servidor", "Error");
+        }
+      });;
+    }
+
   }
 
   resetearSeleccionado() {

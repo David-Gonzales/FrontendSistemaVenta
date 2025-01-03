@@ -5,30 +5,31 @@
   </mat-card-title>
 
   <mat-card-content class="cliente-card-content">
-    <form [formGroup]="formularioClienteVenta">
-      <mat-grid-list cols="4" rowHeight="50px">
-        <mat-grid-tile [colspan]="1">
-          <button mat-raised-button color="primary" style="width: 100%; height: 50px;">
-            <mat-icon mat-list-icon>add</mat-icon>
-            Agregar
+    <mat-grid-list cols="4" rowHeight="50px">
+      <mat-grid-tile [colspan]="1">
+        <button mat-raised-button color="primary" style="width: 100%;
+        height: 50px;" (click)="AgregarCliente()" [disabled]="clienteSeleccionado !== null">
+          <mat-icon mat-list-icon>add</mat-icon>
+          Agregar
+        </button>
+
+      </mat-grid-tile>
+
+      <mat-grid-tile [colspan]="3">
+        <div
+          style="width: 100%; height: 50px; align-content: space-around; margin-left: 30px; padding-left: 30px; background-color: #cccccc; border-radius: 5px 0px 0px 5px;">
+          <mat-label>{{ nombreCompletoCliente || 'Seleccione un Cliente'}}</mat-label>
+        </div>
+        <div
+          style="background-color: #cccccc; margin-right: 30px; padding-right: 15px; height: 50px; border-radius: 0px 5px 5px 0px;">
+          <button mat-icon-button color="warn" class="add-btn" (click)="limpiarCliente()"
+            [disabled]="!clienteSeleccionado">
+            <mat-icon>delete</mat-icon>
           </button>
+        </div>
 
-        </mat-grid-tile>
-
-        <mat-grid-tile [colspan]="3">
-          <div style="width: 100%; height: 50px; align-content: space-around; margin-left: 30px; padding-left: 30px; background-color: #cccccc; border-radius: 5px 0px 0px 5px;">
-            <mat-label>José Ramírez Flores</mat-label>
-            <!-- <span> {{ nombreCliente }}</span> -->
-          </div>
-          <div style="background-color: #cccccc; margin-right: 30px; padding-right: 15px; height: 50px; border-radius: 0px 5px 5px 0px;">
-            <button mat-icon-button color="warn" class="add-btn">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-
-        </mat-grid-tile>
-      </mat-grid-list>
-    </form>
+      </mat-grid-tile>
+    </mat-grid-list>
   </mat-card-content>
 
   <br>
@@ -44,8 +45,8 @@
       <mat-form-field class="full-width" appearance="fill" style="width: 50%;">
         <mat-label>Método de pago</mat-label>
         <mat-select formControlName="tipoPago" [(value)]="tipoPago">
-          <mat-option value="Lleno">Efectivo</mat-option>
-          <mat-option value="Vacio">Tarjeta</mat-option>
+          <mat-option value="Efectivo">Efectivo</mat-option>
+          <mat-option value="Tarjeta">Tarjeta</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -112,7 +113,8 @@
         <mat-grid-tile [colspan]="3"></mat-grid-tile>
 
         <mat-grid-tile [colspan]="3">
-          <div style="width: 80%; height: 50px; text-align: center; align-content: space-around; background-color: #cccccc; border-radius: 5px;">
+          <div
+            style="width: 80%; height: 50px; text-align: center; align-content: space-around; background-color: #cccccc; border-radius: 5px;">
             <label> Total: </label>
             <span> {{ totalPagar }}</span>
           </div>
@@ -179,8 +181,25 @@
         <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
         <tr mat-row *matRowDef="let row; columns:columnasTabla;"></tr>
 
+        <!-- <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="7" style="padding: 1rem; text-align: center;">No hay datos que coincidan con la búsqueda "{{input.value}}"</td>
+        </tr> -->
+
       </table>
     </div>
+
+    <div style="text-align: right; margin-top: 10px;">
+      <button
+      mat-raised-button
+      color="primary"
+      style="height: 50px;"
+      (click)="registrarVenta()"
+      [disabled]="!bloquearBotonRegistrar">
+      Registrar venta
+    </button>
+    </div>
+
+
   </mat-card-content>
 
 </mat-card>

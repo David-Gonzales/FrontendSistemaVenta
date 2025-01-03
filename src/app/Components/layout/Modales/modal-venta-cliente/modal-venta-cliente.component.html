@@ -1,0 +1,105 @@
+<h2 mat-dialog-title>Cliente</h2>
+
+<div style="margin: 0px 20px 0px 20px;">
+  <mat-dialog-content class="formulario-busqueda-dialog-content">
+    <form [formGroup]="formularioBusquedaCliente">
+      <mat-grid-list cols="2" rowHeight="66px" gutterSize="10px">
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Tipo de documento</mat-label>
+            <mat-select formControlName="tipoDocumento">
+              <mat-option value="dni">DNI</mat-option>
+              <mat-option value="ruc">RUC</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Número de documento</mat-label>
+            <input formControlName="numeroDocumento" matInput type="text" minlength="8" maxlength="11">
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Nombres</mat-label>
+            <input formControlName="nombres" matInput type="text">
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Apellidos</mat-label>
+            <input formControlName="apellidos" matInput type="text">
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-form-field class="full-width" appearance="fill" style="width: 100%;">
+            <mat-label>Ciudad</mat-label>
+            <input formControlName="ciudad" matInput type="text">
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile style="transform: translateY(-10px);">
+          <button mat-raised-button color="primary" style="width: 100%; height: 73%;">
+            <mat-icon mat-list-icon>search</mat-icon>Buscar
+          </button>
+        </mat-grid-tile>
+
+      </mat-grid-list>
+    </form>
+  </mat-dialog-content>
+</div>
+
+<mat-card style="margin: 0px 40px 10px 40px;">
+  <mat-divider></mat-divider>
+  <mat-dialog-content class="clientes-dialog-content">
+
+    <table mat-table [dataSource]="dataListaClientes">
+
+      <ng-container matColumnDef="nombres">
+        <th mat-header-cell *matHeaderCellDef>Nombres</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.nombres}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="apellidos">
+        <th mat-header-cell *matHeaderCellDef>Apellidos</th>
+        <td mat-cell *matCellDef="let element"> {{element.apellidos}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="tipoDocumento">
+        <th mat-header-cell *matHeaderCellDef>Tipo Documento</th>
+        <td mat-cell *matCellDef="let element"> {{element.tipoDocumento}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="numeroDocumento">
+        <th mat-header-cell *matHeaderCellDef>Numero Documento</th>
+        <td mat-cell *matCellDef="let element"> {{element.numeroDocumento}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ciudad">
+        <th mat-header-cell *matHeaderCellDef>Ciudad</th>
+        <td mat-cell *matCellDef="let element"> {{element.ciudad}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+      <tr mat-row *matRowDef="let row; columns:columnasTabla;" (click)="seleccionarCliente(row)" [class.selected-row]="clienteSeleccionado === row"></tr>
+
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons>
+
+    </mat-paginator>
+
+  </mat-dialog-content>
+
+</mat-card>
+
+<mat-dialog-actions style="display: flex; justify-content: center; gap: 20px; margin-bottom: 15px;">
+  <button mat-raised-button (click)="cancelar()" color="warn">Volver</button>
+  <button mat-raised-button color="primary" [disabled]="!clienteSeleccionado" (click)="confirmarSeleccion()">Seleccionar</button>
+</mat-dialog-actions>
