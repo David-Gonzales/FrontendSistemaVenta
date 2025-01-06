@@ -97,8 +97,22 @@ export class VentaComponent {
   }
 
   limpiarCliente(): void {
-    this.clienteSeleccionado = null;
-    this.nombreCompletoCliente = 'Seleccione un Cliente';
+    Swal.fire({
+      title: "¿Desea quitar este cliente?",
+      text: this.nombreCompletoCliente,
+      icon: "warning",
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: "Sí, quitar",
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      cancelButtonText: "No, volver"
+    }).then((resultado) => {
+      if (resultado.isConfirmed) {
+        this.clienteSeleccionado = null;
+        this.nombreCompletoCliente = 'Seleccione un Cliente';
+        this.idCliente = 0;
+      }
+    })
   }
 
   //Método para manejar cambios en tipo de venta:
@@ -136,20 +150,21 @@ export class VentaComponent {
     }
 
     // Verificar duplicados
-    const productoDuplicado = this.listaProductosVenta.find(
+    const productoDuplicadoTipoEstado = this.listaProductosVenta.find(
       (detalle) =>
         detalle.idProducto === productoSeleccionado.id &&
         detalle.tipoEstado === this.tipoEstado &&
-        this.tipoVenta
+        detalle.tipoVenta === this.tipoVenta
     );
 
-    if (productoDuplicado) {
-      Swal.fire("Error", "Este producto ya fue agregado con el mismo estado.", "warning");
+
+    if (productoDuplicadoTipoEstado) {
+      Swal.fire("Error", "Este producto ya fue agregado. Por favor, revise nuevamente", "warning");
       return;
     }
 
     const _cantidad: number = this.formularioProductoVenta.value.cantidad;
-    const _tipoEstado: string = this.formularioProductoVenta.value.tipoEstado;
+    //const _tipoEstado: string = this.formularioProductoVenta.value.tipoEstado;
 
     let precioUnitario = 0;
     // Ajustar el precio según el tipo de estado y venta
@@ -237,6 +252,11 @@ export class VentaComponent {
       return; // Terminar la ejecución si no hay usuario
     }
 
+    if(this.idCliente == 0){
+      Swal.fire("Error", "Por favor, seleccione un cliente", "warning");
+      return; // Terminar la ejecución si no hay usuario
+    }
+
     const listaDetallesVenta = this.listaProductosVenta.map(dv => {
       return new DetalleVentaModel(
         dv.idProducto,
@@ -255,22 +275,36 @@ export class VentaComponent {
       idUsuario
     );
 
-
-    if (venta != null) {
-      this._ventaServicio.guardar(venta).subscribe({
-        next: (respuesta) => {
-          if (respuesta.succeeded) {
-            Swal.fire("Éxito", "¡Venta registrada!", "success");
-          } else {
-            this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta", "Error");
-          }
-        },
-        error: () => {
-          this._utilidadServicio.mostrarAlerta("Error del servidor", "Error");
+    Swal.fire({
+      title: "¿Desea registrar la venta?",
+      icon: "warning",
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: "Sí, registrar",
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      cancelButtonText: "No, volver"
+    }).then((resultado) => {
+      if (resultado.isConfirmed) {
+        if (venta != null) {
+          this._ventaServicio.guardar(venta).subscribe({
+            next: (respuesta) => {
+              if (respuesta.succeeded) {
+                Swal.fire("Éxito", "¡Venta registrada!", "success");
+              } else {
+                this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta", "Error");
+              }
+            },
+            error: () => {
+              this._utilidadServicio.mostrarAlerta("Error del servidor", "Error");
+            }
+          });;
         }
-      });;
-    }
+      }
+    });
 
+    this.resetearSeleccionado();
+    this.tipoEstado = 'X';
+    this.bloquearBotonRegistrar = true;
   }
 
   resetearSeleccionado() {
