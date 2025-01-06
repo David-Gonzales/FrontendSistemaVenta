@@ -9,6 +9,8 @@ import { VentaComponent } from './Pages/venta/venta.component';
 import { HistorialVentaComponent } from './Pages/historial-venta/historial-venta.component';
 import { ClienteComponent } from './Pages/cliente/cliente.component';
 import { ReporteComponent } from './Pages/reporte/reporte.component';
+import { EntradaComponent } from './Pages/inventario/entrada/entrada.component';
+import { SalidaComponent } from './Pages/inventario/salida/salida.component';
 
 const routes: Routes = [{
   path:'',
@@ -17,7 +19,24 @@ const routes: Routes = [{
     { path:'dashboard', component:DashBoardComponent },
     { path:'usuarios', component:UsuarioComponent },
     { path:'productos', component:ProductoComponent },
-    { path:'inventario', component:InventarioComponent},
+    {
+      path:'inventario',
+      children: [
+        {
+          path: '',
+          pathMatch: 'full',
+          component: InventarioComponent,  // O el componente que maneje la lista de entradas y salidas
+        },
+        {
+          path: 'entrada',
+          component: EntradaComponent,   // Este es el componente para la entrada
+        },
+        {
+          path: 'salida',
+          component: SalidaComponent,    // Este es el componente para la salida
+        },
+      ]
+    },
     { path:'venta', component:VentaComponent },
     { path:'historial-venta', component:HistorialVentaComponent },
     { path:'clientes', component:ClienteComponent },

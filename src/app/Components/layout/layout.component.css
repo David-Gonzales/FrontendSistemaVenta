@@ -30,3 +30,25 @@
   max-width: 400px;
   width: 100%;
 }
+
+/* .submenu {
+  background-color: #e8e8e8;
+} */
+
+.submenu-item {
+  padding: 10px 20px 10px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 15px;
+}
+
+.submenu-item:hover {
+  background-color: #ddd;
+}
+
+.submenu-item.active {
+  background-color: #d0d0d0;
+}
+

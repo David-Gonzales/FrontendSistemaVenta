@@ -32,4 +32,20 @@ export class LayoutComponent {
     localStorage.removeItem('usuario');
     this.router.navigate(['']);
   }
+
+  isInventarioOpen = false;
+  activeSubItem = '';
+
+  toggleInventario() {
+    this.isInventarioOpen = !this.isInventarioOpen;
+  }
+
+  selectSubItem(item: 'entrada' | 'salida') {
+    this.activeSubItem = item;
+  }
+
+  resetActiveSubItem() {
+    this.activeSubItem = '';
+    this.isInventarioOpen = false;
+  }
 }

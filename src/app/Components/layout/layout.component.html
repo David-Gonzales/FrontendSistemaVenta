@@ -24,14 +24,14 @@
   <mat-sidenav #sidenav opened="true" mode="side" style="width: 200px;">
     <mat-nav-list>
 
-      <mat-list-item routerLink="/pages/dashboard" class="item">
+      <mat-list-item routerLink="/pages/dashboard" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">dashboard</mat-icon>
           <div mat-line class="texto">DashBoard</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/usuarios" class="item">
+      <mat-list-item routerLink="/pages/usuarios" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">group</mat-icon>
           <div mat-line class="texto">Usuarios</div>
@@ -39,42 +39,55 @@
 
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/productos" class="item">
+      <mat-list-item routerLink="/pages/productos" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">store</mat-icon>
           <div mat-line class="texto">Productos</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/inventario" class="item">
+      <mat-list-item class="item" (click)="toggleInventario()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">assignment</mat-icon>
           <div mat-line class="texto">Inventario</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/venta" class="item">
+      <!-- Submenú de Inventario, solo se muestra si isInventarioOpen es true -->
+      <div *ngIf="isInventarioOpen" class="submenu">
+        <mat-list-item class="submenu-item" [class.active]="activeSubItem === 'entrada'"
+          (click)="selectSubItem('entrada')" routerLink="/pages/inventario/entrada">
+          Entrada
+        </mat-list-item>
+        <mat-list-item class="submenu-item" [class.active]="activeSubItem === 'salida'"
+          (click)="selectSubItem('salida')" routerLink="/pages/inventario/salida">
+          Salida
+        </mat-list-item>
+      </div>
+
+
+      <mat-list-item routerLink="/pages/venta" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">shopping_cart</mat-icon>
           <div mat-line class="texto">Venta</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/historial-venta" class="item">
+      <mat-list-item routerLink="/pages/historial-venta" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">edit_note</mat-icon>
           <div mat-line class="texto">Historial Venta</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/clientes" class="item">
+      <mat-list-item routerLink="/pages/clientes" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">person</mat-icon>
           <div mat-line class="texto">Clientes</div>
         </div>
       </mat-list-item>
 
-      <mat-list-item routerLink="/pages/reportes" class="item">
+      <mat-list-item routerLink="/pages/reportes" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">receipt</mat-icon>
           <div mat-line class="texto">Reportes</div>
