@@ -252,7 +252,7 @@ export class VentaComponent {
       return; // Terminar la ejecución si no hay usuario
     }
 
-    if(this.idCliente == 0){
+    if (this.idCliente == 0) {
       Swal.fire("Error", "Por favor, seleccione un cliente", "warning");
       return; // Terminar la ejecución si no hay usuario
     }
@@ -289,7 +289,18 @@ export class VentaComponent {
           this._ventaServicio.guardar(venta).subscribe({
             next: (respuesta) => {
               if (respuesta.succeeded) {
-                Swal.fire("Éxito", "¡Venta registrada!", "success");
+                Swal.fire({
+                  title: "Éxito",
+                  text: "¡Venta registrada!",
+                  icon: "success",
+                  confirmButtonText: "OK",
+                }).then(() => {
+                  this.resetearSeleccionado();
+                  this.tipoEstado = 'X';
+                  this.bloquearBotonRegistrar = true;
+                  window.location.reload();
+                });
+
               } else {
                 this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta", "Error");
               }
@@ -301,10 +312,6 @@ export class VentaComponent {
         }
       }
     });
-
-    this.resetearSeleccionado();
-    this.tipoEstado = 'X';
-    this.bloquearBotonRegistrar = true;
   }
 
   resetearSeleccionado() {
