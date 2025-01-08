@@ -7,41 +7,80 @@ import { MatDialog } from '@angular/material/dialog';
 import { VentaService } from '../../../../Services/venta.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 import { ModalHistorialVentasComponent } from '../../Modales/modal-historial-ventas/modal-historial-ventas.component';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import moment from 'moment';
+
+//Otra forma de configuarción de Fecha según CodigoEstudiante que también está en SharedModule (desde el Shared no lo he exportado)
+export const MY_DATA_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY'
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMMM YYYY'
+  }
+}
 
 @Component({
   selector: 'app-historial-venta',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './historial-venta.component.html',
-  styleUrl: './historial-venta.component.css'
+  styleUrl: './historial-venta.component.css',
+  providers: [
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATA_FORMATS }
+  ]
 })
-export class HistorialVentaComponent implements AfterViewInit{
+export class HistorialVentaComponent implements AfterViewInit {
 
-  columnasTabla:string[] = ['fechaRegistro', 'horaRegistro', 'numeroVenta', 'tipoPago', 'cliente', 'total', 'accion'];
-  dataInicio:HistorialVenta[]=[];
+  columnasTabla: string[] = ['fechaRegistro', 'horaRegistro', 'numeroVenta', 'tipoPago', 'cliente', 'total', 'accion'];
+  dataInicio: HistorialVenta[] = [];
   dataListaHistorialVentas: MatTableDataSource<HistorialVenta> = new MatTableDataSource(this.dataInicio);
-  @ViewChild(MatPaginator) paginacionTabla! : MatPaginator;
+  @ViewChild(MatPaginator) paginacionTabla!: MatPaginator;
 
-  fechaInicio:Date = new Date();
+  formularioBusqueda: FormGroup;
+  opcionesBusqueda: any[] = [
+    { value: "fecha", descripcion: "Fechas" },
+    { value: "numero", descripcion: "Número Venta" }
+  ]
 
   constructor(
+    private fb: FormBuilder,
     private dialog: MatDialog,
     private _ventaServicio: VentaService,
     private _utilidadServicio: UtilidadService
-  ){}
+  ) {
 
-  obtenerHistorialVentas(){
+    this.formularioBusqueda = fb.group({
+      buscarPor: ['fecha'],
+      numero: [''],
+      fechaInicio: [''],
+      fechaFin: ['']
+    });
+
+    //Cuando cambia el valor del buscarPor que se limpie esa búsqueda
+    this.formularioBusqueda.get("buscarPor")?.valueChanges.subscribe(value => {
+      this.formularioBusqueda.patchValue({
+        numero: "",
+        fechaInicio: "",
+        fechaFin: ""
+      });
+    })
+  }
+
+  obtenerHistorialVentas() {
     this._ventaServicio.listar().subscribe({
-      next:(respuesta) => {
-        if(respuesta.succeeded){
+      next: (respuesta) => {
+        if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             this.dataListaHistorialVentas.data = respuesta.data;
-          }else {
+          } else {
             this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Opps!");
           }
         }
       },
-      error:(e)=>{}
+      error: (e) => { }
     });
   }
 
@@ -53,13 +92,56 @@ export class HistorialVentaComponent implements AfterViewInit{
     this.dataListaHistorialVentas.paginator = this.paginacionTabla;
   }
 
-  verDetalleVenta(historialVenta: HistorialVenta){
+  aplicarFiltroTabla(event: Event) {
+    const filtro = (event.target as HTMLInputElement).value;
+    this.dataListaHistorialVentas.filter = filtro.trim().toLocaleLowerCase();
+  }
+
+  buscarVentas() {
+    let _fechaInicio: string = "";
+    let _fechaFin: string = "";
+
+    if (this.formularioBusqueda.value.buscarPor === "fecha") {
+      //encapsular con moment
+      _fechaInicio = moment(this.formularioBusqueda.value.fechaInicio).format('YYYY/MM/DD');
+      _fechaFin = moment(this.formularioBusqueda.value.fechaFin).format('YYYY/MM/DD');
+
+      if (_fechaInicio === "Invalid date" || _fechaFin === "Invalid date") {
+        this._utilidadServicio.mostrarAlerta("Ingresar ambas fechas", "Oops!");
+        return;
+      }
+    }
+
+    const params = {
+      BuscarPor: this.formularioBusqueda.value.buscarPor,
+      NumeroVenta: this.formularioBusqueda.value.numero,
+      FechaInicio: _fechaInicio,
+      FechaFin: _fechaFin,
+    };
+
+    this._ventaServicio.listar(params).subscribe({
+      next: (respuesta) => {
+        if (respuesta.succeeded) {
+          if (Array.isArray(respuesta.data)) {
+            this.dataListaHistorialVentas.data = respuesta.data;
+          } else {
+            this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Oops!");
+          }
+        }
+      },
+      error: (e) => {
+        this._utilidadServicio.mostrarAlerta('Error al consultar las ventas', 'Error');
+      }
+    });
+  }
+
+  verDetalleVenta(historialVenta: HistorialVenta) {
     this.dialog.open(ModalHistorialVentasComponent, {
-      disableClose:true,
+      disableClose: true,
       data: historialVenta
 
     }).afterClosed().subscribe(resultado => {
-      if(resultado === "true") this.obtenerHistorialVentas();
+      if (resultado === "true") this.obtenerHistorialVentas();
     });
   }
 }

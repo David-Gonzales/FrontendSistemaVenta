@@ -12,14 +12,38 @@ import { VentaModel } from '../Models/ventaModel';
 })
 export class VentaService {
 
-  private urlApi:string = environment.endpoint + "Venta/";
-  constructor(private http:HttpClient) { }
+  private urlApi: string = environment.endpoint + "Venta/";
+  constructor(private http: HttpClient) { }
 
-  listar():Observable<PagedResponse<HistorialVenta>>{
-    return this.http.get<PagedResponse<HistorialVenta>>(`${this.urlApi}Listar`);
+  listar(params?: {
+    BuscarPor?: string;
+    NumeroVenta?: string;
+    FechaInicio?: string;
+    FechaFin?: string;
+  }): Observable<PagedResponse<HistorialVenta>> {
+
+    const defaultParams = {
+      BuscarPor: '',
+      NumeroVenta: ''
+    };
+
+    // let queryParams = '';
+    // if (params) {
+    //   queryParams = Object.entries(params)
+    //     .filter(([_, value]) => value !== undefined && value !== null)
+    //     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    //     .join('&');
+    // }
+
+    const queryParams = Object.entries({ ...defaultParams, ...params })
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .join('&');
+
+    return this.http.get<PagedResponse<HistorialVenta>>(`${this.urlApi}Listar${queryParams ? '?' + queryParams : ''}`);
   }
 
-  guardar(request: VentaModel):Observable<Response<number>>{
+  guardar(request: VentaModel): Observable<Response<number>> {
     return this.http.post<Response<number>>(`${this.urlApi}Guardar`, request);
   }
 }

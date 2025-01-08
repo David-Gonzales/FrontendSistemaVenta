@@ -34,9 +34,14 @@
           <td mat-cell *matCellDef="let element"> {{element.cantidad}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="tipoVenta">
+          <th mat-header-cell *matHeaderCellDef>Tipo Venta</th>
+          <td mat-cell *matCellDef="let element"> {{element.tipoVenta}} </td>
+        </ng-container>
+
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef>Estado</th>
-          <td mat-cell *matCellDef="let element"> {{element.tipoEstado == 0? 'Lleno': 'Vacío'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.tipoEstado}} </td>
         </ng-container>
 
         <ng-container matColumnDef="precioUnitario">

@@ -1,19 +1,55 @@
 <h1 style="margin: 20px 0px 0px 40px;">Historial Ventas</h1>
 
 <mat-card style="margin: 20px 40px 40px 40px;">
-  <!-- <mat-card-title style="margin: 20px;">
-    <mat-form-field appearance="outline">
-      <input matInput autocomplete="off" placeholder="Fecha de inicio" [matDatepicker]="dtpFechaInicio"
-        formControlName="fechaInicio" (click)="dtpFechaInicio.open()">
-      <mat-datepicker-toggle matSuffix [for]="dtpFechaInicio"></mat-datepicker-toggle>
-      <mat-datepicker #dtpFechaInicio></mat-datepicker>
-    </mat-form-field>
-  </mat-card-title> -->
-
-  <mat-divider></mat-divider>
 
   <mat-card-content class="historialVenta-card-content">
 
+    <form [formGroup]="formularioBusqueda" (ngSubmit)="buscarVentas()">
+      <div class="campos-formulario">
+        <mat-form-field appearance="fill">
+          <mat-label>Buscar por</mat-label>
+          <mat-select formControlName="buscarPor">
+            <mat-option *ngFor="let item of opcionesBusqueda" [value]="item.value">
+              {{item.descripcion}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="formularioBusqueda.value.buscarPor == 'numero'">
+          <mat-label>Número de Venta</mat-label>
+          <input matInput autocomplete="off" formControlName="numero">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="formularioBusqueda.value.buscarPor == 'fecha'">
+          <mat-label>Fecha Inicio</mat-label>
+          <input matInput autocomplete="off" formControlName="fechaInicio" [matDatepicker]="dtpFechaInicio" (click)="dtpFechaInicio.open()">
+          <mat-datepicker-toggle matSuffix [for]="dtpFechaInicio"></mat-datepicker-toggle>
+          <mat-datepicker #dtpFechaInicio></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="formularioBusqueda.value.buscarPor == 'fecha'">
+          <mat-label>Fecha Fin</mat-label>
+          <input matInput autocomplete="off" formControlName="fechaFin" [matDatepicker]="dtpFechaFin" (click)="dtpFechaFin.open()">
+          <mat-datepicker-toggle matSuffix [for]="dtpFechaFin"></mat-datepicker-toggle>
+          <mat-datepicker #dtpFechaFin></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary"
+        [disabled]="formularioBusqueda.invalid"
+        type="submit"
+        class="boton-buscar">
+          <mat-icon>search</mat-icon>Filtrar
+        </button>
+
+      </div>
+    </form>
+
+    <mat-divider></mat-divider>
+
+    <mat-form-field appearance="fill" class="input-filter">
+      <mat-label>Buscar</mat-label>
+      <input matInput (keyup)="aplicarFiltroTabla($event)" #input>
+    </mat-form-field>
     <br>
     <div class="mat-elevation-z2">
       <table mat-table [dataSource]="dataListaHistorialVentas">
@@ -60,6 +96,9 @@
         <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
         <tr mat-row *matRowDef="let row; columns:columnasTabla;"></tr>
 
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="7" style="padding: 1rem; text-align: center;">No hay datos que coincidan con la búsqueda "{{input.value}}"</td>
+        </tr>
       </table>
 
       <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons>

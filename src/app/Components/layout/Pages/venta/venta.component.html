@@ -113,11 +113,9 @@
         <mat-grid-tile [colspan]="3"></mat-grid-tile>
 
         <mat-grid-tile [colspan]="3">
-          <div
-            style="width: 80%; height: 50px; text-align: center; align-content: space-around; background-color: #cccccc; border-radius: 5px;">
-            <label> Total: </label>
-            <span> {{ totalPagar }}</span>
-          </div>
+          <button mat-raised-button color="accent" style="width: 80%; height: 50px;">
+            Total: S/. {{totalPagar.toFixed(2)}}
+          </button>
         </mat-grid-tile>
 
       </mat-grid-list>

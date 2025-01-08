@@ -15,7 +15,7 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrl: './modal-historial-ventas.component.css'
 })
 export class ModalHistorialVentasComponent {
-  columnasTabla: string[] = ['producto', 'cantidad', 'estado', 'precioUnitario', 'total']
+  columnasTabla: string[] = ['producto', 'cantidad', 'tipoVenta', 'estado', 'precioUnitario', 'total']
   dataInicio: DetalleVenta[] = [];
   dataListaDetalleVenta: MatTableDataSource<DetalleVenta> = new MatTableDataSource(this.dataInicio);
   @ViewChild(MatPaginator) paginacionTabla!: MatPaginator;
