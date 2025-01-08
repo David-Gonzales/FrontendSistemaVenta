@@ -25,6 +25,10 @@ export class ClienteService {
     return this.http.get<Response<Cliente>>(`${this.urlApi}Obtener/${id}`);
   }
 
+  tieneVentas(id:number):Observable<Response<boolean>>{
+    return this.http.get<Response<boolean>>(`${this.urlApi}TieneVentas?id=${id}`);
+  }
+
   guardar(request: ClienteModel):Observable<Response<number>>{
     return this.http.post<Response<number>>(`${this.urlApi}Guardar`, request);
   }
