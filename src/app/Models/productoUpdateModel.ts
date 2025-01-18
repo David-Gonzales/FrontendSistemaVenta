@@ -3,7 +3,6 @@ export class ProductoUpdateModel {
   Nombre: string;
   Capacidad: number;
   Unidad: string;
-  Stock: number;
   Precio: number;
   EsActivo: boolean;
 
@@ -12,7 +11,6 @@ export class ProductoUpdateModel {
     nombre: string,
     capacidad: number,
     unidad: string,
-    stock: number,
     precio: number,
     esActivo: boolean
   ){
@@ -20,7 +18,6 @@ export class ProductoUpdateModel {
     this.Nombre = nombre;
     this.Capacidad = capacidad;
     this.Unidad = unidad;
-    this.Stock = stock;
     this.Precio = precio;
     this.EsActivo = esActivo;
   }

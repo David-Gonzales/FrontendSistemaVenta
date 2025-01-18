@@ -31,7 +31,6 @@ export class ModalProductoComponent {
       nombre: ['', Validators.required],
       capacidad: ['', Validators.required],
       unidad: ['', Validators.required],
-      stock: [{ value: '', disabled: true }, Validators.required],
       precio: ['', Validators.required],
       esActivo: ['true', Validators.required],
     });
@@ -48,12 +47,9 @@ export class ModalProductoComponent {
         nombre: this.datosProducto.nombre,
         capacidad: this.datosProducto.capacidad,
         unidad: this.datosProducto.unidad,
-        stock: this.datosProducto.stock,
         precio: this.datosProducto.precio,
         esActivo: this.datosProducto.esActivo
       });
-    } else {
-      this.formularioProducto.get('stock')?.enable();
     }
   }
 
@@ -64,7 +60,6 @@ export class ModalProductoComponent {
         Nombre: this.formularioProducto.getRawValue().nombre,
         Capacidad: this.formularioProducto.getRawValue().capacidad,
         Unidad: this.formularioProducto.getRawValue().unidad,
-        Stock: this.formularioProducto.getRawValue().stock,
         Precio: this.formularioProducto.getRawValue().precio,
         EsActivo: Boolean(this.formularioProducto.getRawValue().esActivo)
       }
@@ -84,7 +79,6 @@ export class ModalProductoComponent {
         Nombre: this.formularioProducto.value.nombre,
         Capacidad: this.formularioProducto.value.capacidad,
         Unidad: this.formularioProducto.value.unidad,
-        Stock: this.formularioProducto.value.stock,
         Precio: this.formularioProducto.value.precio,
         EsActivo: Boolean(this.formularioProducto.value.esActivo)
       }

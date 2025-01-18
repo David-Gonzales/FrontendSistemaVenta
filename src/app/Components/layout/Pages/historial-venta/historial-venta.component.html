@@ -20,9 +20,11 @@
           <input matInput autocomplete="off" formControlName="numero">
         </mat-form-field>
 
+
         <mat-form-field appearance="fill" *ngIf="formularioBusqueda.value.buscarPor == 'fecha'">
           <mat-label>Fecha Inicio</mat-label>
           <input matInput autocomplete="off" formControlName="fechaInicio" [matDatepicker]="dtpFechaInicio" (click)="dtpFechaInicio.open()">
+          <mat-hint>{{dateFormatString()}}</mat-hint>
           <mat-datepicker-toggle matSuffix [for]="dtpFechaInicio"></mat-datepicker-toggle>
           <mat-datepicker #dtpFechaInicio></mat-datepicker>
         </mat-form-field>
@@ -30,6 +32,7 @@
         <mat-form-field appearance="fill" *ngIf="formularioBusqueda.value.buscarPor == 'fecha'">
           <mat-label>Fecha Fin</mat-label>
           <input matInput autocomplete="off" formControlName="fechaFin" [matDatepicker]="dtpFechaFin" (click)="dtpFechaFin.open()">
+          <mat-hint>{{dateFormatString()}}</mat-hint>
           <mat-datepicker-toggle matSuffix [for]="dtpFechaFin"></mat-datepicker-toggle>
           <mat-datepicker #dtpFechaFin></mat-datepicker>
         </mat-form-field>
@@ -37,7 +40,8 @@
         <button mat-raised-button color="primary"
         [disabled]="formularioBusqueda.invalid"
         type="submit"
-        class="boton-buscar">
+        class="boton-buscar"
+        style="width: 15%; height: 50px; transform: translateY(-11px);">
           <mat-icon>search</mat-icon>Filtrar
         </button>
 

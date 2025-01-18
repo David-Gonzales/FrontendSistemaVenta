@@ -21,7 +21,7 @@ export class TransaccionService {
   }
 
   obtener(id:number):Observable<Response<Transaccion>>{
-    return this.http.get<Response<Transaccion>>(`${this.urlApi}Obtener/${id}`);
+    return this.http.get<Response<Transaccion>>(`${this.urlApi}Obtener?id=${id}`);
   }
 
   guardar(request: TransaccionModel):Observable<Response<number>>{
@@ -33,6 +33,6 @@ export class TransaccionService {
   }
 
   eliminar(id:number):Observable<Response<number>>{
-    return this.http.delete<Response<number>>(`${this.urlApi}Eliminar/${id}`);
+    return this.http.delete<Response<number>>(`${this.urlApi}Eliminar?id=${id}`);
   }
 }

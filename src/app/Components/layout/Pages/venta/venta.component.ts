@@ -71,7 +71,8 @@ export class VentaComponent {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             const lista = respuesta.data;
-            this.listaProductos = lista.filter(p => p.esActivo == 1 && p.stock > 0);
+            // Filtramos los productos activos y stock mayor a 0
+            this.listaProductos = lista.filter(p => p.esActivo == 1 && p.stockGeneral > 0);
           } else {
             console.error("La propiedad 'data' no es un arreglo de productos.");
           }

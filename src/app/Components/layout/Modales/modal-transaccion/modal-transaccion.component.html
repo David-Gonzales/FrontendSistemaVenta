@@ -1,0 +1,88 @@
+<h2 mat-dialog-title>{{tituloAccion}} Entrada</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="formularioTransaccion">
+    <mat-grid-list cols="1" rowHeight="90px">
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Usuario</mat-label>
+          <mat-select formControlName="idUsuario">
+            <mat-option *ngFor="let item of listaUsuarios" [value]="item.id">
+              {{item.nombres + " " + item.apellidos}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha</mat-label>
+          <input matInput
+          autocomplete="off"
+          placeholder="Fecha"
+          [matDatepicker]="dtpFecha"
+          formControlName="fecha"
+          (click)="dtpFecha.open()">
+          <mat-hint>{{dateFormatString()}}</mat-hint>
+
+          <mat-datepicker-toggle matSuffix [for]="dtpFecha"></mat-datepicker-toggle>
+
+          <mat-datepicker #dtpFecha></mat-datepicker>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Hora</mat-label>
+          <input matInput
+          autocomplete="off"
+          placeholder="Hora"
+          type="time"
+          formControlName="hora">
+
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Cantidad</mat-label>
+          <input matInput autocomplete="off"
+          formControlName="cantidad"
+          type="number">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Producto</mat-label>
+          <mat-select formControlName="idProducto">
+            <mat-option *ngFor="let item of listaProductos" [value]="item.id">
+              {{item.nombre + " " + item.capacidad + " " + item.unidad}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option [value]="'Lleno'">Lleno</mat-option>
+            <mat-option [value]="'Vacio'">Vacio</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </form>
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button matDialogClose color="warn">Volver</button>
+  <button mat-raised-button color="primary"
+    [disabled]="formularioTransaccion.invalid"
+    (click)="guardarEditar_Transaccion()"
+  >{{botonAccion}}</button>
+</mat-dialog-actions>

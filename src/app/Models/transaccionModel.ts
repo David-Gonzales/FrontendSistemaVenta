@@ -1,19 +1,16 @@
-export type tipoEstado = "Lleno" | "Vacío";
-export type tipoTransaccion = "Ingreso" | "Salida";
-
 export class TransaccionModel {
-  TipoTransaccion: tipoTransaccion;
+  TipoTransaccion: string;
   Fecha: Date;
   Cantidad: number;
-  TipoEstado: tipoEstado;
+  TipoEstado: string;
   IdProducto: number;
   IdUsuario: number;
 
   constructor(
-    tipoTransaccion: tipoTransaccion,
+    tipoTransaccion: string,
     fecha: Date,
     cantidad: number,
-    tipoEstado: tipoEstado,
+    tipoEstado: string,
     idProducto: number,
     idUsuario: number
   ){

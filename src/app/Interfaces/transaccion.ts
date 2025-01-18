@@ -1,12 +1,9 @@
-export type tipoEstado = "Lleno" | "Vacío";
-export type tipoTransaccion = "Ingreso" | "Salida";
-
 export interface Transaccion {
   id: number;
-  tipoTransaccion: tipoTransaccion;
+  tipoTransaccion: string;
   fecha: Date;
   cantidad: number;
-  tipoEstado: tipoEstado;
+  tipoEstado: string;
 
   //Producto
   idProducto: number;

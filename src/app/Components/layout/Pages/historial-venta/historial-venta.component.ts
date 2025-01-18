@@ -1,15 +1,22 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { SharedModule } from '../../../../Reutilizable/shared/shared.module';
 import { HistorialVenta } from '../../../../Interfaces/historial-venta';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { VentaService } from '../../../../Services/venta.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 import { ModalHistorialVentasComponent } from '../../Modales/modal-historial-ventas/modal-historial-ventas.component';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import moment from 'moment';
+import { MatDatepickerIntl, MatDatepickerModule } from '@angular/material/datepicker';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+
+import 'moment/locale/es';
 
 //Otra forma de configuarción de Fecha según CodigoEstudiante que también está en SharedModule (desde el Shared no lo he exportado)
 export const MY_DATA_FORMATS = {
@@ -29,10 +36,20 @@ export const MY_DATA_FORMATS = {
   templateUrl: './historial-venta.component.html',
   styleUrl: './historial-venta.component.css',
   providers: [
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATA_FORMATS }
-  ]
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATA_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
+    provideMomentDateAdapter(),
+  ],
 })
 export class HistorialVentaComponent implements AfterViewInit {
+
+  private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
+  private readonly _intl = inject(MatDatepickerIntl);
+  private readonly _locale = signal(inject<unknown>(MAT_DATE_LOCALE));
+  readonly dateFormatString = computed(() => {
+    return 'DD/MM/YYYY';
+  });
+
 
   columnasTabla: string[] = ['fechaRegistro', 'horaRegistro', 'numeroVenta', 'tipoPago', 'cliente', 'total', 'accion'];
   dataInicio: HistorialVenta[] = [];
@@ -43,7 +60,8 @@ export class HistorialVentaComponent implements AfterViewInit {
   opcionesBusqueda: any[] = [
     { value: "fecha", descripcion: "Fechas" },
     { value: "numero", descripcion: "Número Venta" }
-  ]
+  ];
+
 
   constructor(
     private fb: FormBuilder,
