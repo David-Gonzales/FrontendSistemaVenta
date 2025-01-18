@@ -37,9 +37,13 @@ export class ModalTransaccionComponent {
   readonly dateFormatString = computed(() => {
     return 'DD/MM/YYYY';
   });
+  readonly timeFormatString = computed(() => {
+    return 'HH:MM';
+  });
 
   formularioTransaccion: FormGroup;
   tituloAccion: string = "Nueva";
+  titulo2:string = "";
   botonAccion: string = "Guardar";
 
   listaUsuarios: Usuario[] = [];
@@ -64,9 +68,16 @@ export class ModalTransaccionComponent {
       estado: ['', Validators.required],
     });
 
-    if (datosTransaccion != null) {
+    if (datosTransaccion.id != null) {
       this.tituloAccion = "Editar";
       this.botonAccion = "Actualizar";
+    }
+
+    if(datosTransaccion.tipoTransaccion == "Ingreso"){
+      this.titulo2 = "Entrada";
+    }
+    else{
+      this.titulo2 = "Salida";
     }
 
     this._usuarioServicio.listar().subscribe({
@@ -141,7 +152,7 @@ export class ModalTransaccionComponent {
       console.error("El valor de 'fecha' no es un objeto Moment válido");
     }
 
-    if (this.datosTransaccion != null && this.datosTransaccion.id) {
+    if (this.datosTransaccion.id) {
 
       const _transaccionModificada: TransaccionUpdateModel = {
         Id: this.datosTransaccion.id,
@@ -158,7 +169,7 @@ export class ModalTransaccionComponent {
             this._utilidadServicio.mostrarAlerta("La entrada fue modificada", "Éxito");
             this.modalActual.close("true");
           }
-          else {
+          else if(respuesta.succeeded === false){
             this._utilidadServicio.mostrarAlerta("No se pudo modificar la entrada", "Error");
           }
         },
@@ -167,12 +178,12 @@ export class ModalTransaccionComponent {
     }
     else {
       const _transaccionCreada: TransaccionModel = {
-        TipoTransaccion: "Ingreso",
+        TipoTransaccion: this.datosTransaccion.tipoTransaccion,
         Fecha: this.fechaFinal,
         Cantidad: this.formularioTransaccion.value.cantidad,
         TipoEstado: this.formularioTransaccion.value.estado,
-        IdProducto: this.formularioTransaccion.value.idProducto,//por corregir
-        IdUsuario: this.formularioTransaccion.value.idUsuario//por corregir
+        IdProducto: this.formularioTransaccion.value.idProducto,
+        IdUsuario: this.formularioTransaccion.value.idUsuario
       }
       this._transaccionServicio.guardar(_transaccionCreada).subscribe({
         next: (respuesta) => {
@@ -180,7 +191,7 @@ export class ModalTransaccionComponent {
             this._utilidadServicio.mostrarAlerta("Se registró la entrada", "Éxito");
             this.modalActual.close("true");
           }
-          else {
+          else if(respuesta.succeeded === false){
             this._utilidadServicio.mostrarAlerta("No se pudo registrar la entrada", "Error");
           }
         },

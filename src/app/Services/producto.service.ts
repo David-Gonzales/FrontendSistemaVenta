@@ -3,10 +3,12 @@ import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { PagedResponse } from '../Interfaces/paged-response';
 import { Producto } from '../Interfaces/producto';
+import { ProductoConEstado } from '../Interfaces/producto-con-estado';
 import { Observable } from 'rxjs';
 import { Response } from '../Interfaces/response';
 import { ProductoModel } from '../Models/productoModel';
 import { ProductoUpdateModel } from '../Models/productoUpdateModel';
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,10 @@ export class ProductoService {
 
   listar():Observable<PagedResponse<Producto>>{
     return this.http.get<PagedResponse<Producto>>(`${this.urlApi}Listar`);
+  }
+
+  listarProductosEstados():Observable<Response<ProductoConEstado>>{
+    return this.http.get<Response<ProductoConEstado>>(`${this.urlApi}ListarProductosEstados`);
   }
 
   obtener(id:number):Observable<Response<Producto>>{

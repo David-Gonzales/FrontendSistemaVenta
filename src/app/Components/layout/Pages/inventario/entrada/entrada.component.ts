@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { SharedModule } from '../../../../../Reutilizable/shared/shared.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,15 +11,27 @@ import { MatPaginator } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
 import { ModalTransaccionComponent } from '../../../Modales/modal-transaccion/modal-transaccion.component';
 
+//Para el árbol
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { ProductoConEstado } from '../../../../../Interfaces/producto-con-estado';
+import { ProductoService } from '../../../../../Services/producto.service';
+import { NestedTreeControl } from '@angular/cdk/tree';
 
 @Component({
   selector: 'app-entrada',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, MatTreeModule],
   templateUrl: './entrada.component.html',
   styleUrl: './entrada.component.css'
 })
-export class EntradaComponent {
+export class EntradaComponent implements AfterViewInit{
+
+  productosConEstados: ProductoConEstado[] = [];
+  procesarStockProducto: { name: string; children: any[] }[] = [];
+
+  treeControl = new NestedTreeControl<{ name: string; children: any[] }>(node => node.children);
+    dataSource = new MatTreeNestedDataSource<{ name: string; children: any[] }>();
+    hasChild = (_: number, node: { name: string; children: any[] }) => !!node.children && node.children.length > 0;
 
   columnasTabla: string[] = ['usuario', 'horaIngreso', 'fechaIngreso', 'cantidad', 'producto', 'estado', 'acciones'];
 
@@ -31,8 +43,9 @@ export class EntradaComponent {
   constructor(
     private dialog: MatDialog,
     private _transaccionServicio: TransaccionService,
-    private _utilidadServicio: UtilidadService
-  ) { }
+    private _utilidadServicio: UtilidadService,
+    private _productoServicio: ProductoService
+  ) {}
 
   obtenerEntradas() {
     this._transaccionServicio.listar().subscribe({
@@ -43,7 +56,7 @@ export class EntradaComponent {
             if (transaccionesIngreso.length > 0) {
               this.dataListaTransacciones.data = transaccionesIngreso;
             } else {
-              this._utilidadServicio.mostrarAlerta("No se encontraron transacciones de tipo 'Ingreso'", "Opps!");
+              this._utilidadServicio.mostrarAlerta("No se encontraron transacciones de tipo 'Ingreso'", "Ok!");
             }
 
           }
@@ -61,9 +74,47 @@ export class EntradaComponent {
     });
   }
 
+  obtenerStockProductos(){
+    this._productoServicio.listarProductosEstados().subscribe({
+      next: (respuesta) => {
+        if(respuesta.succeeded){
+          if (Array.isArray(respuesta.data)){
+            this.productosConEstados = respuesta.data;
+            this.procesarStockEnArbol(this.productosConEstados);
+          }
+          else {
+            console.error("Los datos recibidos no son un array:", respuesta.data);
+          }
+        }
+        else{
+          console.error("La respuesta del servicio no fue exitosa:", respuesta);
+        }
+      },
+      error: (e) => {console.error("Error al obtener los productos con estados:", e);}
+    });
+  }
+
+  procesarStockEnArbol(data: ProductoConEstado[]) {
+    this.procesarStockProducto = [];
+    for (const producto of data) {
+      const NodoProducto = {
+        name: producto.nombre,
+        children: producto.estados.map(estado => ({
+          name: `${estado.tipoEstado}: ${estado.stock}`,
+          children: []
+        }))
+      };
+      this.procesarStockProducto.push(NodoProducto);
+    }
+    this.dataSource.data = this.procesarStockProducto;
+  }
+
   ngOnInit(): void {
     this.obtenerEntradas();
+    this.obtenerStockProductos();
   }
+
+  hasChildNodes = (_: number, node: any) => !!node.children && node.children.length > 0;
 
   ngAfterViewInit(): void {
     this.dataListaTransacciones.paginator = this.paginacionTabla;
@@ -76,6 +127,7 @@ export class EntradaComponent {
 
   agregarEntrada() {
     this.dialog.open(ModalTransaccionComponent, {
+      data: { tipoTransaccion: 'Ingreso' },
       disableClose: true
     }).afterClosed().subscribe({
       next: (resultado) => {

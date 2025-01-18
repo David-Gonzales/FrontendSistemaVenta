@@ -72,6 +72,7 @@ export class SalidaComponent {
 
   agregarSalida() {
     this.dialog.open(ModalTransaccionComponent, {
+      data: { tipoTransaccion: 'Salida' },
       disableClose: true
     }).afterClosed().subscribe({
       next: (resultado) => {
