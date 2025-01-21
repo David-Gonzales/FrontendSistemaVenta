@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core';import { TreeGridModule } from '@syncfusion/ej2-angular-treegrid';
+
 import { RouterOutlet } from '@angular/router';
 import { SharedModule } from './Reutilizable/shared/shared.module';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SharedModule],
+  imports: [TreeGridModule, RouterOutlet, SharedModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

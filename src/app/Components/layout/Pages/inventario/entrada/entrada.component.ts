@@ -17,6 +17,11 @@ import { ProductoConEstado } from '../../../../../Interfaces/producto-con-estado
 import { ProductoService } from '../../../../../Services/producto.service';
 import { NestedTreeControl } from '@angular/cdk/tree';
 
+interface NodoArbol { // Nueva interfaz para los nodos del árbol
+  name: string;
+  children?: NodoArbol[];
+}
+
 @Component({
   selector: 'app-entrada',
   standalone: true,
@@ -24,14 +29,16 @@ import { NestedTreeControl } from '@angular/cdk/tree';
   templateUrl: './entrada.component.html',
   styleUrl: './entrada.component.css'
 })
-export class EntradaComponent implements AfterViewInit{
+export class EntradaComponent implements AfterViewInit {
 
   productosConEstados: ProductoConEstado[] = [];
-  procesarStockProducto: { name: string; children: any[] }[] = [];
+  procesarStockProducto: ProductoConEstado[] = [];
 
-  treeControl = new NestedTreeControl<{ name: string; children: any[] }>(node => node.children);
-    dataSource = new MatTreeNestedDataSource<{ name: string; children: any[] }>();
-    hasChild = (_: number, node: { name: string; children: any[] }) => !!node.children && node.children.length > 0;
+  treeControl = new NestedTreeControl<NodoArbol>(node => node.children);
+  dataSource = new MatTreeNestedDataSource<NodoArbol>();
+
+  hasChild = (_: number, node: NodoArbol) => !!node.children && node.children.length > 0;
+  mostrarArbol = false;
 
   columnasTabla: string[] = ['usuario', 'horaIngreso', 'fechaIngreso', 'cantidad', 'producto', 'estado', 'acciones'];
 
@@ -45,7 +52,7 @@ export class EntradaComponent implements AfterViewInit{
     private _transaccionServicio: TransaccionService,
     private _utilidadServicio: UtilidadService,
     private _productoServicio: ProductoService
-  ) {}
+  ) { }
 
   obtenerEntradas() {
     this._transaccionServicio.listar().subscribe({
@@ -74,11 +81,11 @@ export class EntradaComponent implements AfterViewInit{
     });
   }
 
-  obtenerStockProductos(){
+  obtenerStockProductos() {
     this._productoServicio.listarProductosEstados().subscribe({
       next: (respuesta) => {
-        if(respuesta.succeeded){
-          if (Array.isArray(respuesta.data)){
+        if (respuesta.succeeded) {
+          if (Array.isArray(respuesta.data)) {
             this.productosConEstados = respuesta.data;
             this.procesarStockEnArbol(this.productosConEstados);
           }
@@ -86,27 +93,32 @@ export class EntradaComponent implements AfterViewInit{
             console.error("Los datos recibidos no son un array:", respuesta.data);
           }
         }
-        else{
+        else {
           console.error("La respuesta del servicio no fue exitosa:", respuesta);
         }
       },
-      error: (e) => {console.error("Error al obtener los productos con estados:", e);}
+      error: (e) => { console.error("Error al obtener los productos con estados:", e); }
     });
   }
 
   procesarStockEnArbol(data: ProductoConEstado[]) {
-    this.procesarStockProducto = [];
-    for (const producto of data) {
-      const NodoProducto = {
-        name: producto.nombre,
-        children: producto.estados.map(estado => ({
-          name: `${estado.tipoEstado}: ${estado.stock}`,
-          children: []
-        }))
-      };
-      this.procesarStockProducto.push(NodoProducto);
-    }
-    this.dataSource.data = this.procesarStockProducto;
+    const dataArbol: NodoArbol[] = data.map(
+      producto => {
+        const nodoProducto: NodoArbol = { name: producto.nombre, children: [] };
+        nodoProducto.children = producto.estados.map(
+          estados => ({
+            name: `${estados.tipoEstado}: ${estados.stock}`
+          })
+        );
+        return nodoProducto;
+      }
+    );
+    console.log(dataArbol);
+    this.dataSource.data = dataArbol;
+  }
+
+  toggleArbol() {
+    this.mostrarArbol = !this.mostrarArbol;
   }
 
   ngOnInit(): void {

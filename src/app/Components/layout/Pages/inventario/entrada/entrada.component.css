@@ -2,3 +2,17 @@
   width: 100%;
   margin-top: 20px;
 }
+.example-tree-progress-bar {
+  margin-left: 30px;
+}
+
+.example-tree-invisible {
+  display: none;
+}
+
+.card-title {
+  margin: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
