@@ -1,0 +1,70 @@
+.campos-formulario{
+  display: flex;
+  align-items: flex-start;
+}
+
+.boton-buscar{
+  margin-top: 15px;
+}
+
+mat-form-field{
+  margin-right: 10px;
+}
+
+.input-filter{
+  width: 100%;
+  font-size: 14px;
+}
+
+.reporte-container {
+  padding: 20px;
+}
+
+.menu-reporte {
+  margin-bottom: 20px;
+}
+
+.menu-reporte label{
+  font-weight: bold;
+  margin-right: 10px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.seleccion {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.seleccion select {
+  appearance: none; /* Elimina la flecha por defecto */
+  -webkit-appearance: none; /* Compatibilidad Safari */
+  -moz-appearance: none; /* Compatibilidad Firefox */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.seleccion select:focus {
+  border-color: #007bff;
+  box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.2);
+  outline: none;
+}
+
+.seleccion::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #007bff;
+  font-size: 12px;
+}

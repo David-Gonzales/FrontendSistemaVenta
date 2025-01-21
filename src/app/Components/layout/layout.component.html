@@ -24,7 +24,7 @@
   <mat-sidenav #sidenav opened="true" mode="side" style="width: 200px;">
     <mat-nav-list>
 
-      <mat-list-item routerLink="/pages/dashboard" class="item" (click)="resetActiveSubItem()">
+      <!-- <mat-list-item routerLink="/pages/dashboard" class="item" (click)="resetActiveSubItem()">
         <div style="display: flex;">
           <mat-icon mat-list-icon class="icono">dashboard</mat-icon>
           <div mat-line class="texto">DashBoard</div>
@@ -53,7 +53,7 @@
         </div>
       </mat-list-item>
 
-      <!-- Submenú de Inventario, solo se muestra si isInventarioOpen es true -->
+
       <div *ngIf="isInventarioOpen" class="submenu">
         <mat-list-item class="submenu-item" [class.active]="activeSubItem === 'entrada'"
           (click)="selectSubItem('entrada')" routerLink="/pages/inventario/entrada">
@@ -92,7 +92,26 @@
           <mat-icon mat-list-icon class="icono">receipt</mat-icon>
           <div mat-line class="texto">Reportes</div>
         </div>
+      </mat-list-item> -->
+
+      <mat-list-item *ngFor="let menu of listaMenus" [routerLink]="menu.url" class="item" (click)="toggleSubMenu(menu)">
+        <div style="display: flex;">
+          <mat-icon mat-list-icon class="icono"> {{menu.icono}} </mat-icon>
+          <div mat-line class="texto"> {{menu.nombre}} </div>
+        </div>
       </mat-list-item>
+
+      <!-- Submenú de Inventario, o de cualquier otro menú con submenús -->
+      <div *ngFor="let menu of listaMenus">
+        <div *ngIf="menu.submenus && menu.showSubMenu" class="submenu">
+          <mat-list-item *ngFor="let subMenu of menu.submenus"
+                         class="submenu-item"
+                         [routerLink]="subMenu.url"
+                         (click)="resetActiveSubItem()">
+            {{subMenu.nombre}}
+          </mat-list-item>
+        </div>
+      </div>
 
     </mat-nav-list>
   </mat-sidenav>

@@ -1,0 +1,23 @@
+.campos-formulario{
+  display: flex;
+  align-items: flex-start;
+}
+
+.boton-buscar{
+  margin-top: 15px;
+}
+
+.boton-excel {
+  width: 15%;
+  height: 50px;
+  transform: translateY(-11px);
+}
+
+mat-form-field{
+  margin-right: 10px;
+}
+
+.input-filter{
+  width: 100%;
+  font-size: 14px;
+}

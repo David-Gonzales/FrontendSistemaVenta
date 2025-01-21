@@ -1,1 +1,34 @@
-<p>reporte works!</p>
+<h1 style="margin: 20px 0px 0px 40px;">Reportes</h1>
+
+<mat-card style="margin: 20px 40px 40px 40px;">
+
+  <div class="reporte-container">
+    <!-- Menú desplegable -->
+    <div class="menu-reporte">
+      <label for="reportes">Seleccionar Reporte:</label>
+      <div class="seleccion">
+        <select id="reportes" (change)="onReporteChange($event)">
+          <option value="">-- Seleccione un reporte --</option>
+          <option value="reporte1">Reporte de Ventas por Fecha</option>
+          <option value="reporte2">Reporte de Ventas por Vendedor</option>
+          <option value="reporte3">Reporte de Ventas por Cliente</option>
+          <option value="reporte4">Reporte de Ingresos y Salidas</option>
+          <option value="reporte5">Reporte de Rendimiento de Vendedores</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Contenedor para el reporte seleccionado -->
+    <div class="reporte-content">
+      <ng-container *ngIf="selectedReporte === 'reporte1'">
+        <app-reporte1></app-reporte1>
+      </ng-container>
+    </div>
+
+    <div *ngIf="!selectedReporte" class="mensaje-seleccion">
+      Por favor, selecciona un reporte para mostrar.
+    </div>
+  </div>
+
+</mat-card>

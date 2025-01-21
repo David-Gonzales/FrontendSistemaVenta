@@ -20,4 +20,8 @@ export class MenuService {
   obtener(id:number):Observable<Response<Menu>>{
     return this.http.get<Response<Menu>>(`${this.urlApi}Obtener/${id}`);
   }
+
+  listarMenusPorUsuario(id:number):Observable<Response<Menu>>{
+    return this.http.get<Response<Menu>>(`${this.urlApi}ListarMenusPorUsuario?idUsuario=${id}`);
+  }
 }

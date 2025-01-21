@@ -12,13 +12,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import moment from 'moment';
 import { MatDatepickerIntl, MatDatepickerModule } from '@angular/material/datepicker';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+
 
 import 'moment/locale/es';
 
-//Otra forma de configuarción de Fecha según CodigoEstudiante que también está en SharedModule (desde el Shared no lo he exportado)
 export const MY_DATA_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY'
@@ -117,7 +114,7 @@ export class HistorialVentaComponent implements AfterViewInit {
   cambiarPagina(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    //this.obtenerHistorialVentas();
+    this.obtenerHistorialVentas();
   }
 
   ngOnInit(): void {

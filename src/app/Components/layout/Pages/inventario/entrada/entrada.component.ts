@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { SharedModule } from '../../../../../Reutilizable/shared/shared.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,6 +13,7 @@ import { ModalTransaccionComponent } from '../../../Modales/modal-transaccion/mo
 
 import { ProductoConEstado } from '../../../../../Interfaces/producto-con-estado';
 import { ProductoService } from '../../../../../Services/producto.service';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-entrada',
@@ -21,7 +22,10 @@ import { ProductoService } from '../../../../../Services/producto.service';
   templateUrl: './entrada.component.html',
   styleUrl: './entrada.component.css'
 })
-export class EntradaComponent implements AfterViewInit {
+export class EntradaComponent implements AfterViewInit, OnDestroy {
+
+  private destroy$ = new Subject<void>(); // Subject para gestionar la suscripción
+  private paginatorSubscription: Subscription | undefined;
 
   totalRegistros: number = 0; // Total de registros en el backend
   pageSize: number = 10; // Tamaño de página inicial
@@ -48,18 +52,20 @@ export class EntradaComponent implements AfterViewInit {
   obtenerEntradas() {
     const pageNumber = this.pageIndex + 1;
     const tipoTransaccion = 'Ingreso';
+
     this._transaccionServicio.listar(pageNumber, this.pageSize, tipoTransaccion).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             this.totalRegistros = respuesta.totalCount;
-            // Actualizar el estado del paginador manualmente
-            if (this.paginacionTabla) {
-              this.paginacionTabla.length = this.totalRegistros;
-              this.paginacionTabla.pageIndex = this.pageIndex;
-            }
-            this.dataListaTransacciones.data = respuesta.data;
 
+            // Actualizar el estado del paginador manualmente
+            // if (this.paginacionTabla) {
+            //   this.paginacionTabla.length = this.totalRegistros;
+            // }
+
+            // this.dataListaTransacciones.data = respuesta.data;
+            this.dataListaTransacciones.data = [...respuesta.data]; // Usar el spread operator para crear un nuevo array
           }
           else {
             console.error("La propiedad 'data' no es un arreglo de transacciones.");
@@ -76,9 +82,10 @@ export class EntradaComponent implements AfterViewInit {
   }
 
   cambiarPagina(event: PageEvent) {
+
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    //this.obtenerEntradas();
+    this.obtenerEntradas();
   }
 
   obtenerStockProductos() {
@@ -110,10 +117,24 @@ export class EntradaComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataListaTransacciones.paginator = this.paginacionTabla;
-    this.paginacionTabla.page.subscribe((event: PageEvent) => {
-      this.cambiarPagina(event);
-    });
+    setTimeout(() => { // Usar setTimeout
+      if (this.paginacionTabla) {
+          this.dataListaTransacciones.paginator = this.paginacionTabla;
+          if (!this.paginatorSubscription) { // Verifica si ya existe una suscripción
+              this.paginatorSubscription = this.paginacionTabla.page.pipe(takeUntil(this.destroy$)).subscribe((event: PageEvent) => {
+                this.cambiarPagina(event);
+              });
+          }
+      }
+    }, 0);
+  }
+
+  ngOnDestroy(): void { // Implementar ngOnDestroy para desuscribirse
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.paginatorSubscription) { // Desuscribirse también en ngOnDestroy
+      this.paginatorSubscription.unsubscribe();
+    }
   }
 
   aplicarFiltroTabla(event: Event) {
