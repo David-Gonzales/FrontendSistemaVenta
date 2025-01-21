@@ -16,8 +16,10 @@ export class TransaccionService {
   private urlApi:string = environment.endpoint + "Transaccion/";
   constructor(private http:HttpClient) { }
 
-  listar():Observable<PagedResponse<Transaccion>>{
-    return this.http.get<PagedResponse<Transaccion>>(`${this.urlApi}Listar`);
+  listar(pageNumber: number=1, pageSize: number=10, tipoTransaccion: string=''):Observable<PagedResponse<Transaccion>>{
+    return this.http.get<PagedResponse<Transaccion>>(`
+      ${this.urlApi}Listar?pageNumber=${pageNumber}&pageSize=${pageSize}&tipoTransaccion=${tipoTransaccion}`
+    );
   }
 
   obtener(id:number):Observable<Response<Transaccion>>{

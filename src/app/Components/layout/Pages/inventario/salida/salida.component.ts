@@ -7,9 +7,12 @@ import { Transaccion } from '../../../../../Interfaces/transaccion';
 
 import { UtilidadService } from '../../../../../Reutilizable/utilidad.service';
 import { TransaccionService } from '../../../../../Services/transaccion.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
 import { ModalTransaccionComponent } from '../../../Modales/modal-transaccion/modal-transaccion.component';
+
+import { ProductoConEstado } from '../../../../../Interfaces/producto-con-estado';
+import { ProductoService } from '../../../../../Services/producto.service';
 
 
 @Component({
@@ -21,6 +24,14 @@ import { ModalTransaccionComponent } from '../../../Modales/modal-transaccion/mo
 })
 export class SalidaComponent {
 
+  totalRegistros: number = 0; // Total de registros en el backend
+  pageSize: number = 10; // Tamaño de página inicial
+  pageIndex: number = 0; // Página actual
+
+  productosConEstados: ProductoConEstado[] = [];
+
+  mostrarAccordion = false;
+
   columnasTabla: string[] = ['usuario', 'horaSalida', 'fechaSalida', 'cantidad', 'producto', 'estado', 'acciones'];
 
   listaTransacciones: Transaccion[] = [];
@@ -31,20 +42,24 @@ export class SalidaComponent {
   constructor(
     private dialog: MatDialog,
     private _transaccionServicio: TransaccionService,
-    private _utilidadServicio: UtilidadService
+    private _utilidadServicio: UtilidadService,
+    private _productoServicio: ProductoService
   ) { }
 
   obtenerSalidas() {
-    this._transaccionServicio.listar().subscribe({
+    const pageNumber = this.pageIndex + 1;
+    const tipoTransaccion = 'Salida';
+    this._transaccionServicio.listar(pageNumber, this.pageSize, tipoTransaccion).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
-            const transaccionesIngreso = respuesta.data.filter(transaccion => transaccion.tipoTransaccion === 'Salida');
-            if (transaccionesIngreso.length > 0) {
-              this.dataListaTransacciones.data = transaccionesIngreso;
-            } else {
-              this._utilidadServicio.mostrarAlerta("No se encontraron transacciones de tipo 'Salida'", "Opps!");
+            this.totalRegistros = respuesta.totalCount;
+              // Actualizar el estado del paginador manualmente
+            if (this.paginacionTabla) {
+                this.paginacionTabla.length = this.totalRegistros;
+                this.paginacionTabla.pageIndex = this.pageIndex;
             }
+            this.dataListaTransacciones.data = respuesta.data;
           }
           else {
             console.error("La propiedad 'data' no es un arreglo de transacciones.");
@@ -57,12 +72,45 @@ export class SalidaComponent {
     });
   }
 
+  cambiarPagina(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    //this.obtenerSalidas();
+  }
+
+  obtenerStockProductos() {
+    this._productoServicio.listarProductosEstados().subscribe({
+      next: (respuesta) => {
+        if (respuesta.succeeded) {
+          if (Array.isArray(respuesta.data)) {
+            this.productosConEstados = respuesta.data;
+          }
+          else {
+            console.error("Los datos recibidos no son un array:", respuesta.data);
+          }
+        }
+        else {
+          console.error("La respuesta del servicio no fue exitosa:", respuesta);
+        }
+      },
+      error: (e) => { console.error("Error al obtener los productos con estados:", e); }
+    });
+  }
+
+  toggleAccordion() {
+    this.mostrarAccordion = !this.mostrarAccordion;
+  }
+
   ngOnInit(): void {
     this.obtenerSalidas();
+    this.obtenerStockProductos();
   }
 
   ngAfterViewInit(): void {
     this.dataListaTransacciones.paginator = this.paginacionTabla;
+    this.paginacionTabla.page.subscribe((event: PageEvent) => {
+      this.cambiarPagina(event);
+    });
   }
 
   aplicarFiltroTabla(event: Event) {

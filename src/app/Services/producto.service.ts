@@ -18,8 +18,10 @@ export class ProductoService {
   private urlApi:string = environment.endpoint + "Producto/";
   constructor(private http:HttpClient) { }
 
-  listar():Observable<PagedResponse<Producto>>{
-    return this.http.get<PagedResponse<Producto>>(`${this.urlApi}Listar`);
+  listar(pageNumber: number=1, pageSize: number=10):Observable<PagedResponse<Producto>>{
+    return this.http.get<PagedResponse<Producto>>(`
+      ${this.urlApi}Listar?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    );
   }
 
   listarProductosEstados():Observable<Response<ProductoConEstado>>{

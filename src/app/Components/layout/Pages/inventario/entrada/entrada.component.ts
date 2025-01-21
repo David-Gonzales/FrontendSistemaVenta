@@ -7,38 +7,29 @@ import { Transaccion } from '../../../../../Interfaces/transaccion';
 
 import { UtilidadService } from '../../../../../Reutilizable/utilidad.service';
 import { TransaccionService } from '../../../../../Services/transaccion.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
 import { ModalTransaccionComponent } from '../../../Modales/modal-transaccion/modal-transaccion.component';
 
-//Para el árbol
-import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 import { ProductoConEstado } from '../../../../../Interfaces/producto-con-estado';
 import { ProductoService } from '../../../../../Services/producto.service';
-import { NestedTreeControl } from '@angular/cdk/tree';
-
-interface NodoArbol { // Nueva interfaz para los nodos del árbol
-  name: string;
-  children?: NodoArbol[];
-}
 
 @Component({
   selector: 'app-entrada',
   standalone: true,
-  imports: [SharedModule, MatTreeModule],
+  imports: [SharedModule],
   templateUrl: './entrada.component.html',
   styleUrl: './entrada.component.css'
 })
 export class EntradaComponent implements AfterViewInit {
 
+  totalRegistros: number = 0; // Total de registros en el backend
+  pageSize: number = 10; // Tamaño de página inicial
+  pageIndex: number = 0; // Página actual
+
   productosConEstados: ProductoConEstado[] = [];
-  procesarStockProducto: ProductoConEstado[] = [];
 
-  treeControl = new NestedTreeControl<NodoArbol>(node => node.children);
-  dataSource = new MatTreeNestedDataSource<NodoArbol>();
-
-  hasChild = (_: number, node: NodoArbol) => !!node.children && node.children.length > 0;
-  mostrarArbol = false;
+  mostrarAccordion = false;
 
   columnasTabla: string[] = ['usuario', 'horaIngreso', 'fechaIngreso', 'cantidad', 'producto', 'estado', 'acciones'];
 
@@ -55,16 +46,19 @@ export class EntradaComponent implements AfterViewInit {
   ) { }
 
   obtenerEntradas() {
-    this._transaccionServicio.listar().subscribe({
+    const pageNumber = this.pageIndex + 1;
+    const tipoTransaccion = 'Ingreso';
+    this._transaccionServicio.listar(pageNumber, this.pageSize, tipoTransaccion).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
-            const transaccionesIngreso = respuesta.data.filter(transaccion => transaccion.tipoTransaccion === 'Ingreso');
-            if (transaccionesIngreso.length > 0) {
-              this.dataListaTransacciones.data = transaccionesIngreso;
-            } else {
-              this._utilidadServicio.mostrarAlerta("No se encontraron transacciones de tipo 'Ingreso'", "Ok!");
+            this.totalRegistros = respuesta.totalCount;
+            // Actualizar el estado del paginador manualmente
+            if (this.paginacionTabla) {
+              this.paginacionTabla.length = this.totalRegistros;
+              this.paginacionTabla.pageIndex = this.pageIndex;
             }
+            this.dataListaTransacciones.data = respuesta.data;
 
           }
           else {
@@ -81,13 +75,18 @@ export class EntradaComponent implements AfterViewInit {
     });
   }
 
+  cambiarPagina(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    //this.obtenerEntradas();
+  }
+
   obtenerStockProductos() {
     this._productoServicio.listarProductosEstados().subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             this.productosConEstados = respuesta.data;
-            this.procesarStockEnArbol(this.productosConEstados);
           }
           else {
             console.error("Los datos recibidos no son un array:", respuesta.data);
@@ -101,24 +100,8 @@ export class EntradaComponent implements AfterViewInit {
     });
   }
 
-  procesarStockEnArbol(data: ProductoConEstado[]) {
-    const dataArbol: NodoArbol[] = data.map(
-      producto => {
-        const nodoProducto: NodoArbol = { name: producto.nombre, children: [] };
-        nodoProducto.children = producto.estados.map(
-          estados => ({
-            name: `${estados.tipoEstado}: ${estados.stock}`
-          })
-        );
-        return nodoProducto;
-      }
-    );
-    console.log(dataArbol);
-    this.dataSource.data = dataArbol;
-  }
-
-  toggleArbol() {
-    this.mostrarArbol = !this.mostrarArbol;
+  toggleAccordion() {
+    this.mostrarAccordion = !this.mostrarAccordion;
   }
 
   ngOnInit(): void {
@@ -126,10 +109,11 @@ export class EntradaComponent implements AfterViewInit {
     this.obtenerStockProductos();
   }
 
-  hasChildNodes = (_: number, node: any) => !!node.children && node.children.length > 0;
-
   ngAfterViewInit(): void {
     this.dataListaTransacciones.paginator = this.paginacionTabla;
+    this.paginacionTabla.page.subscribe((event: PageEvent) => {
+      this.cambiarPagina(event);
+    });
   }
 
   aplicarFiltroTabla(event: Event) {

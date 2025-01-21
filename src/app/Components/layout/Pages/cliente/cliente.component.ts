@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SharedModule } from '../../../../Reutilizable/shared/shared.module';
 import { Cliente } from '../../../../Interfaces/cliente';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ClienteService } from '../../../../Services/cliente.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
@@ -17,6 +17,11 @@ import Swal from 'sweetalert2';
   styleUrl: './cliente.component.css'
 })
 export class ClienteComponent {
+
+  totalRegistros: number = 0; // Total de registros en el backend
+  pageSize: number = 10; // Tamaño de página inicial
+  pageIndex: number = 0; // Página actual
+
   columnasTabla: string[] = ['nombres', 'apellidos', 'tipoDocumento', 'numeroDocumento', 'ciudad', 'edad', 'correo', 'telefono', 'estado', 'acciones']
   dataInicio: Cliente[] = [];
   dataListaClientes: MatTableDataSource<Cliente> = new MatTableDataSource(this.dataInicio);
@@ -29,11 +34,19 @@ export class ClienteComponent {
   ) { }
 
   obtenerClientes() {
-    this._clienteServicio.listar().subscribe({
+    const pageNumber = this.pageIndex + 1;
+    this._clienteServicio.listar(pageNumber, this.pageSize).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             this.dataListaClientes.data = respuesta.data;
+            this.totalRegistros = respuesta.totalCount;
+
+            // Actualizar el estado del paginador manualmente
+            if (this.paginacionTabla) {
+              this.paginacionTabla.length = this.totalRegistros;
+              this.paginacionTabla.pageIndex = this.pageIndex;
+            }
           } else {
             console.error("La propiedad 'data' no es un arreglo de Clientes.");
             this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Opps!");
@@ -45,12 +58,21 @@ export class ClienteComponent {
     });
   }
 
+  cambiarPagina(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    //this.obtenerClientes();
+  }
+
   ngOnInit(): void {
     this.obtenerClientes();
   }
 
   ngAfterViewInit(): void {
     this.dataListaClientes.paginator = this.paginacionTabla;
+    this.paginacionTabla.page.subscribe((event: PageEvent) => {
+      this.cambiarPagina(event);
+    });
   }
 
   aplicarFiltroTabla(event: Event) {

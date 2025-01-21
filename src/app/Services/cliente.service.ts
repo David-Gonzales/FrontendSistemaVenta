@@ -17,8 +17,10 @@ export class ClienteService {
   private urlApi:string = environment.endpoint + "Cliente/";
   constructor(private http:HttpClient) { }
 
-  listar():Observable<PagedResponse<Cliente>>{
-    return this.http.get<PagedResponse<Cliente>>(`${this.urlApi}Listar`);
+  listar(pageNumber: number = 1, pageSize: number = 10):Observable<PagedResponse<Cliente>>{
+    return this.http.get<PagedResponse<Cliente>>(`
+      ${this.urlApi}Listar?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    );
   }
 
   obtener(id:number):Observable<Response<Cliente>>{

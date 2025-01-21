@@ -15,7 +15,8 @@ export class VentaService {
   private urlApi: string = environment.endpoint + "Venta/";
   constructor(private http: HttpClient) { }
 
-  listar(params?: {
+  listar(pageNumber: number = 1, pageSize: number = 10,
+    params?: {
     BuscarPor?: string;
     NumeroVenta?: string;
     FechaInicio?: string;
@@ -40,7 +41,9 @@ export class VentaService {
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
       .join('&');
 
-    return this.http.get<PagedResponse<HistorialVenta>>(`${this.urlApi}Listar${queryParams ? '?' + queryParams : ''}`);
+    return this.http.get<PagedResponse<HistorialVenta>>(
+      `${this.urlApi}Listar?pageNumber=${pageNumber}&pageSize=${pageSize}${queryParams ? '&' + queryParams : ''}`
+    );
   }
 
   guardar(request: VentaModel): Observable<Response<number>> {

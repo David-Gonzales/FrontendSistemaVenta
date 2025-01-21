@@ -2,10 +2,33 @@
 
 <mat-card style="margin: 20px 40px 40px 40px;">
 
-  <mat-card-title style="margin: 20px;">
+  <mat-card-title class="card-title">
     <button mat-raised-button color="primary" (click)="agregarSalida()">
       <mat-icon mat-list-icon>add</mat-icon>Agregar Salida
     </button>
+
+    <div class="stock-container">
+      <button mat-raised-button color="accent" (click)="toggleAccordion()">
+        <mat-icon mat-list-icon>{{ mostrarAccordion ? 'expand_less' : 'expand_more' }}</mat-icon> Stock
+      </button>
+
+      <div *ngIf="mostrarAccordion" class="accordion-container">
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let producto of productosConEstados">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ producto.nombre }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngFor="let estado of producto.estados">
+              <p>{{ estado.tipoEstado }}: {{ estado.stock }}</p>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+
   </mat-card-title>
 
   <mat-divider></mat-divider>
@@ -69,7 +92,15 @@
 
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons>
+      <mat-paginator
+        #paginacionTabla
+        [length]="totalRegistros"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons
+        (page)="cambiarPagina($event)"
+      >
       </mat-paginator>
     </div>
   </mat-card-content>

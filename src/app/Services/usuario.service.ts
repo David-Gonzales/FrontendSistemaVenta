@@ -23,8 +23,10 @@ export class UsuarioService {
     return this.http.post<Response<Sesion>>(`${this.urlApi}IniciarSesion`, request);
   }
 
-  listar():Observable<PagedResponse<Usuario>>{
-    return this.http.get<PagedResponse<Usuario>>(`${this.urlApi}Listar`);
+  listar(pageNumber: number=1, pageSize: number=10):Observable<PagedResponse<Usuario>>{
+    return this.http.get<PagedResponse<Usuario>>(`
+      ${this.urlApi}Listar?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    );
   }
 
   obtener(id:number):Observable<Response<Usuario>>{

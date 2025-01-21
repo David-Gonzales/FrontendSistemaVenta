@@ -2,17 +2,28 @@
   width: 100%;
   margin-top: 20px;
 }
-.example-tree-progress-bar {
-  margin-left: 30px;
-}
-
-.example-tree-invisible {
-  display: none;
-}
 
 .card-title {
   margin: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+
+.stock-container {
+  display: flex;
+  align-items: center;
+}
+
+.accordion-container {
+  position: absolute; /* Posicionamiento absoluto */
+  top: 100%; /* Lo coloca justo debajo del card-title */
+  right: 0; /* Alineado a la derecha */
+  z-index: 10; /* Asegura que esté por encima de otros elementos */
+  background-color: white; /* O el color de fondo de tu tarjeta */
+  border: 1px solid #ddd; /* Borde opcional */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra opcional */
+  width: auto; /* Ancho automático para ajustarse al contenido */
+  min-width: 200px; /* Ancho mínimo para evitar que se vea muy pequeño */
 }

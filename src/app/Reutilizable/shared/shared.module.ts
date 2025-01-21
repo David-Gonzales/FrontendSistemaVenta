@@ -46,6 +46,8 @@ import { MomentDateModule }  from '@angular/material-moment-adapter';
 //no sé xd??
 import { RouterModule } from '@angular/router'
 import { MatFormFieldModule } from '@angular/material/form-field';
+//Acordión
+import { MatExpansionModule } from '@angular/material/expansion';
 
 export const MY_FORMATS = {
   parse: {
@@ -91,7 +93,8 @@ export const MY_FORMATS = {
     MatNativeDateModule,
     MomentDateModule,
     RouterModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatExpansionModule
   ],
   providers: [
     MatDatepickerModule,

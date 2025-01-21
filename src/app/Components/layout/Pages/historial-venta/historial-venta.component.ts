@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject, On
 import { SharedModule } from '../../../../Reutilizable/shared/shared.module';
 import { HistorialVenta } from '../../../../Interfaces/historial-venta';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { VentaService } from '../../../../Services/venta.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
@@ -43,6 +43,10 @@ export const MY_DATA_FORMATS = {
 })
 export class HistorialVentaComponent implements AfterViewInit {
 
+  totalRegistros: number = 0; // Total de registros en el backend
+  pageSize: number = 10; // Tamaño de página inicial
+  pageIndex: number = 0; // Página actual
+
   private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
   private readonly _intl = inject(MatDatepickerIntl);
   private readonly _locale = signal(inject<unknown>(MAT_DATE_LOCALE));
@@ -54,7 +58,7 @@ export class HistorialVentaComponent implements AfterViewInit {
   columnasTabla: string[] = ['fechaRegistro', 'horaRegistro', 'numeroVenta', 'tipoPago', 'cliente', 'total', 'accion'];
   dataInicio: HistorialVenta[] = [];
   dataListaHistorialVentas: MatTableDataSource<HistorialVenta> = new MatTableDataSource(this.dataInicio);
-  @ViewChild(MatPaginator) paginacionTabla!: MatPaginator;
+  @ViewChild(MatPaginator) paginacionTablaHV!: MatPaginator;
 
   formularioBusqueda: FormGroup;
   opcionesBusqueda: any[] = [
@@ -88,11 +92,19 @@ export class HistorialVentaComponent implements AfterViewInit {
   }
 
   obtenerHistorialVentas() {
-    this._ventaServicio.listar().subscribe({
+    const pageNumber = this.pageIndex + 1;
+    this._ventaServicio.listar(pageNumber, this.pageSize).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
             this.dataListaHistorialVentas.data = respuesta.data;
+            this.totalRegistros = respuesta.totalCount;
+
+            // Actualizar el estado del paginador manualmente
+            if (this.paginacionTablaHV) {
+              this.paginacionTablaHV.length = this.totalRegistros;
+              this.paginacionTablaHV.pageIndex = this.pageIndex;
+            }
           } else {
             this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Opps!");
           }
@@ -102,12 +114,21 @@ export class HistorialVentaComponent implements AfterViewInit {
     });
   }
 
+  cambiarPagina(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    //this.obtenerHistorialVentas();
+  }
+
   ngOnInit(): void {
     this.obtenerHistorialVentas();
   }
 
   ngAfterViewInit(): void {
-    this.dataListaHistorialVentas.paginator = this.paginacionTabla;
+    this.dataListaHistorialVentas.paginator = this.paginacionTablaHV;
+    this.paginacionTablaHV.page.subscribe((event: PageEvent) => {
+      this.cambiarPagina(event);
+    });
   }
 
   aplicarFiltroTabla(event: Event) {
@@ -137,7 +158,7 @@ export class HistorialVentaComponent implements AfterViewInit {
       FechaFin: _fechaFin,
     };
 
-    this._ventaServicio.listar(params).subscribe({
+    this._ventaServicio.listar(1, 10, params).subscribe({
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {

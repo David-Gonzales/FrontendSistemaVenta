@@ -2,5 +2,7 @@ import { Response } from "./response";
 
 export interface PagedResponse<T> extends Response<T> {
   pageNumber: number,
-  pageSize: number
+  pageSize: number,
+  totalCount: number,
+  totalPages: number
 }

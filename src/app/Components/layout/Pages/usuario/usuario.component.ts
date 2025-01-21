@@ -6,7 +6,7 @@ import { Usuario } from '../../../../Interfaces/usuario';
 import { UsuarioService } from '../../../../Services/usuario.service';
 import { UtilidadService } from '../../../../Reutilizable/utilidad.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import Swal from 'sweetalert2'
 
 @Component({
@@ -17,6 +17,10 @@ import Swal from 'sweetalert2'
   styleUrl: './usuario.component.css'
 })
 export class UsuarioComponent implements AfterViewInit{
+
+  totalRegistros: number = 0; // Total de registros en el backend
+  pageSize: number = 10; // Tamaño de página inicial
+  pageIndex: number = 0; // Página actual
 
   columnasTabla:string[]=['nombres', 'apellidos', 'telefono', 'correo', 'rol', 'estado','acciones']
   dataInicio:Usuario[]=[];
@@ -30,12 +34,20 @@ export class UsuarioComponent implements AfterViewInit{
   ){}
 
   obtenerUsuarios(){
-    this._usuarioServicio.listar().subscribe({
+    const pageNumber = this.pageIndex + 1;
+    this._usuarioServicio.listar(pageNumber, this.pageSize).subscribe({
       next:(respuesta)=> {
         if(respuesta.succeeded){
           // Si 'data' es un arreglo de Usuarios, asignarlo a la tabla
           if (Array.isArray(respuesta.data)) {
             this.dataListaUsuarios.data = respuesta.data;
+            this.totalRegistros = respuesta.totalCount;
+
+            // Actualizar el estado del paginador manualmente
+            if (this.paginacionTabla) {
+              this.paginacionTabla.length = this.totalRegistros;
+              this.paginacionTabla.pageIndex = this.pageIndex;
+            }
           } else {
             console.error("La propiedad 'data' no es un arreglo de Usuarios.");
             this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Opps!");
@@ -47,12 +59,22 @@ export class UsuarioComponent implements AfterViewInit{
     });
   }
 
+
+  cambiarPagina(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    //this.obtenerUsuarios();
+  }
+
   ngOnInit(): void{
     this.obtenerUsuarios();
   }
 
   ngAfterViewInit(): void {
     this.dataListaUsuarios.paginator = this.paginacionTabla;
+    this.paginacionTabla.page.subscribe((event: PageEvent) => {
+      this.cambiarPagina(event);
+    });
   }
 
   aplicarFiltroTabla(event: Event){
