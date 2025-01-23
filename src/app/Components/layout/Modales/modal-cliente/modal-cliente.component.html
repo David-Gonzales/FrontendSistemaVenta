@@ -23,7 +23,10 @@
       <mat-grid-tile>
         <mat-form-field appearance="outline">
           <mat-label>Tipo Documento</mat-label>
-          <input matInput autocomplete="off" formControlName="tipoDocumento">
+          <mat-select formControlName="tipoDocumento" (selectionChange)="onTipoDocumentoChange($event.value)">
+            <mat-option [value]="'DNI'">DNI</mat-option>
+            <mat-option [value]="'RUC'">RUC</mat-option>
+          </mat-select>
           <mat-icon matSuffix>assignment</mat-icon>
         </mat-form-field>
       </mat-grid-tile>
@@ -31,7 +34,10 @@
       <mat-grid-tile>
         <mat-form-field appearance="outline">
           <mat-label>Número Documento</mat-label>
-          <input matInput autocomplete="off" formControlName="numeroDocumento">
+          <input matInput formControlName="numeroDocumento" (input)="onInputChange($event)" [maxlength]="maxLength" type="text">
+          <mat-error *ngIf="formularioCliente.get('numeroDocumento')?.hasError('required')">El número es obligatorio</mat-error>
+          <mat-error *ngIf="formularioCliente.get('numeroDocumento')?.hasError('maxlength')">Longitud inválida</mat-error>
+          <mat-error *ngIf="formularioCliente.get('numeroDocumento')?.hasError('pattern')">El número debe ser un valor numérico positivo</mat-error>
           <mat-icon matSuffix>assignment_ind</mat-icon>
         </mat-form-field>
       </mat-grid-tile>
@@ -65,9 +71,14 @@
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
-          <mat-label>Telefono</mat-label>
-          <input matInput autocomplete="off" formControlName="telefono">
+          <mat-label>Teléfono</mat-label>
+          <input type="text" matInput autocomplete="off" formControlName="telefono"
+                 (input)="onTelefonoInputChange($event)" maxlength="9">
           <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="formularioCliente.get('telefono')?.hasError('required')">El teléfono es obligatorio</mat-error>
+          <mat-error *ngIf="formularioCliente.get('telefono')?.hasError('pattern')">El teléfono debe ser numérico y comenzar con 9</mat-error>
+          <mat-error *ngIf="formularioCliente.get('telefono')?.hasError('minlength')">El teléfono debe tener 9 caracteres</mat-error>
+          <mat-error *ngIf="formularioCliente.get('telefono')?.hasError('maxlength')">El teléfono debe tener 9 caracteres</mat-error>
         </mat-form-field>
       </mat-grid-tile>
 

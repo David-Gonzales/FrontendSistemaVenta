@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { SharedModule } from '../../../../Reutilizable/shared/shared.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -15,10 +15,11 @@ import { ClienteModel } from '../../../../Models/clienteModel';
   templateUrl: './modal-cliente.component.html',
   styleUrl: './modal-cliente.component.css'
 })
-export class ModalClienteComponent {
+export class ModalClienteComponent implements OnInit{
   formularioCliente:FormGroup;
   tituloAccion:string="Agregar";
   botonAccion:string="Guardar";
+  maxLength: number = 8;
 
   constructor(
     private modalActual: MatDialogRef<ModalClienteComponent>,
@@ -32,11 +33,16 @@ export class ModalClienteComponent {
       nombres:['',Validators.required],
       apellidos:['',Validators.required],
       tipoDocumento:['',Validators.required],
-      numeroDocumento:['',Validators.required],
+      numeroDocumento:['',[Validators.required, Validators.pattern('^[0-9]+$')]],
       ciudad:['',Validators.required],
       fechaNacimiento:[Date || null, Validators.required],
       correo:['',Validators.required],
-      telefono:['',Validators.required],
+      telefono:['', [
+        Validators.required,
+        Validators.pattern('^[9][0-9]{8}$'),
+        Validators.minLength(9),
+        Validators.maxLength(9)
+      ]],
       esActivo:['true',Validators.required],
     });
 
@@ -60,6 +66,45 @@ export class ModalClienteComponent {
         esActivo: this.datosCliente.esActivo,
       });
     }
+    this.onTipoDocumentoChange(this.formularioCliente.get('tipoDocumento')?.value);
+  }
+
+  onTipoDocumentoChange(tipo: string): void {
+    // Actualiza la longitud máxima según el tipo de documento
+    if (tipo === 'DNI') {
+      this.maxLength = 8;
+    } else if (tipo === 'RUC') {
+      this.maxLength = 11;
+    }
+
+    // Actualiza la validación para el campo de número de documento
+    this.formularioCliente.get('numeroDocumento')?.setValidators([
+      Validators.required,
+      Validators.pattern('^[0-9]+$') // Solo números permitidos
+    ]);
+
+    // Recalcula la validación del formulario
+    this.formularioCliente.get('numeroDocumento')?.updateValueAndValidity();
+  }
+
+  onTelefonoInputChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+
+    // Elimina cualquier carácter que no sea un número
+    inputElement.value = value.replace(/[^0-9]/g, '');
+
+    // Actualiza la validación para asegurarse de que solo haya 9 caracteres
+    this.formularioCliente.get('telefono')?.setValue(inputElement.value);
+  }
+
+
+  onInputChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+
+    // Elimina cualquier carácter que no sea un número
+    inputElement.value = value.replace(/[^0-9]/g, '');
   }
 
   guardarEditar_Cliente(){

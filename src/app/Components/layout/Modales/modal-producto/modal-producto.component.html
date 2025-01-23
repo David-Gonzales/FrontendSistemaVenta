@@ -22,14 +22,18 @@
       <mat-grid-tile>
         <mat-form-field appearance="outline">
           <mat-label>Unidad</mat-label>
-          <input matInput autocomplete="off" formControlName="unidad">
+          <mat-select formControlName="unidad">
+            <mat-option [value]="'L'">L</mat-option>
+            <mat-option [value]="'mL'">mL</mat-option>
+          </mat-select>
         </mat-form-field>
       </mat-grid-tile>
 
       <mat-grid-tile>
         <mat-form-field appearance="outline">
           <mat-label>Precio</mat-label>
-          <input matInput autocomplete="off" formControlName="precio">
+          <input matInput type="number" min="0.01" placeholder="0.00" autocomplete="off" formControlName="precio">
+          <span matTextPrefix>S/.&nbsp;</span>
         </mat-form-field>
       </mat-grid-tile>
 

@@ -25,8 +25,8 @@ export class LayoutComponent {
   ){}
 
   ngOnInit(): void {
-    //const usuario = localStorage.getItem('usuario');
     const usuario = this._utilidadServicio.obtenerSesionUsuario();
+    console.log(usuario);
     if (usuario!= null) {
 
       this.nombreUsuario = usuario.nombreCompleto;
@@ -37,7 +37,7 @@ export class LayoutComponent {
       this.rol = 'Sin rol';
     }
 
-    this._menuServicio.listarMenusPorUsuario(usuario.IdUsuario).subscribe({
+    this._menuServicio.listarMenusPorUsuario(usuario.idUsuario).subscribe({
       next: (respuesta)=> {
         if(respuesta.succeeded){
           if (Array.isArray(respuesta.data)) {
@@ -63,6 +63,12 @@ export class LayoutComponent {
     if (menu.submenus && menu.submenus.length > 0) {
       menu.showSubMenu = !menu.showSubMenu;
     }
+
+    this.listaMenus.forEach(m => {
+      if (m !== menu) {
+        m.showSubMenu = false;
+      }
+    });
   }
 
   cerrarSesion(): void {
@@ -70,19 +76,19 @@ export class LayoutComponent {
     this.router.navigate(['login']);
   }
 
-  isInventarioOpen = false;
-  activeSubItem = '';
+  // isInventarioOpen = false;
+  // activeSubItem = '';
 
-  toggleInventario() {
-    this.isInventarioOpen = !this.isInventarioOpen;
-  }
+  // toggleInventario() {
+  //   this.isInventarioOpen = !this.isInventarioOpen;
+  // }
 
-  selectSubItem(item: 'entrada' | 'salida') {
-    this.activeSubItem = item;
-  }
+  // selectSubItem(item: 'entrada' | 'salida') {
+  //   this.activeSubItem = item;
+  // }
 
-  resetActiveSubItem() {
-    this.activeSubItem = '';
-    this.isInventarioOpen = false;
-  }
+  // resetActiveSubItem() {
+  //   this.activeSubItem = '';
+  //   this.isInventarioOpen = false;
+  // }
 }

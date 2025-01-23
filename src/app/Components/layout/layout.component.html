@@ -94,24 +94,26 @@
         </div>
       </mat-list-item> -->
 
-      <mat-list-item *ngFor="let menu of listaMenus" [routerLink]="menu.url" class="item" (click)="toggleSubMenu(menu)">
-        <div style="display: flex;">
-          <mat-icon mat-list-icon class="icono"> {{menu.icono}} </mat-icon>
-          <div mat-line class="texto"> {{menu.nombre}} </div>
-        </div>
-      </mat-list-item>
-
-      <!-- Submenú de Inventario, o de cualquier otro menú con submenús -->
       <div *ngFor="let menu of listaMenus">
-        <div *ngIf="menu.submenus && menu.showSubMenu" class="submenu">
+        <!-- Menú principal -->
+        <mat-list-item (click)="toggleSubMenu(menu)" class="item" [routerLink]="menu.submenus && menu.submenus.length > 0 ? null : menu.url" routerLinkActive="active">
+          <div style="display: flex;">
+            <mat-icon mat-list-icon class="icono"> {{menu.icono}} </mat-icon>
+            <div mat-line class="texto"> {{menu.nombre}} </div>
+          </div>
+        </mat-list-item>
+
+        <!-- Submenú (solo se muestra si showSubMenu es true) -->
+        <div *ngIf="menu.showSubMenu" class="submenu show">
           <mat-list-item *ngFor="let subMenu of menu.submenus"
                          class="submenu-item"
                          [routerLink]="subMenu.url"
-                         (click)="resetActiveSubItem()">
+                         routerLinkActive="active">
             {{subMenu.nombre}}
           </mat-list-item>
         </div>
       </div>
+
 
     </mat-nav-list>
   </mat-sidenav>

@@ -1,6 +1,7 @@
 .item {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .icono {
@@ -31,9 +32,22 @@
   width: 100%;
 }
 
-/* .submenu {
-  background-color: #e8e8e8;
-} */
+.submenu {
+  position: relative;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ajusta el ancho según sea necesario */
+  display: none; /* Inicialmente oculto */
+}
+
+.submenu.show {
+  display: block; /* Mostrar submenú cuando se active */
+}
+
 
 .submenu-item {
   padding: 10px 20px 10px 40px;
@@ -41,7 +55,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: 15px;
 }
 
 .submenu-item:hover {

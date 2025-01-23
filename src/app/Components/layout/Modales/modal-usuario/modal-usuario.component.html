@@ -23,8 +23,13 @@
       <mat-grid-tile>
         <mat-form-field appearance="outline">
           <mat-label>Teléfono</mat-label>
-          <input matInput autocomplete="off" formControlName="telefono">
+          <input type="text" matInput autocomplete="off" formControlName="telefono"
+                 (input)="onTelefonoInputChange($event)" maxlength="9">
           <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="formularioUsuario.get('telefono')?.hasError('required')">El teléfono es obligatorio</mat-error>
+          <mat-error *ngIf="formularioUsuario.get('telefono')?.hasError('pattern')">El teléfono debe ser numérico y comenzar con 9</mat-error>
+          <mat-error *ngIf="formularioUsuario.get('telefono')?.hasError('minlength')">El teléfono debe tener 9 caracteres</mat-error>
+          <mat-error *ngIf="formularioUsuario.get('telefono')?.hasError('maxlength')">El teléfono debe tener 9 caracteres</mat-error>
         </mat-form-field>
       </mat-grid-tile>
 

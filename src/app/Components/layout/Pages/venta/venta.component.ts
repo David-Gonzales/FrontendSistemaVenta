@@ -302,12 +302,47 @@ export class VentaComponent {
                   window.location.reload();
                 });
 
-              } else {
-                this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta", "Error");
+              } if (respuesta.succeeded === false) {
+                const mensaje = respuesta.message;
+                this._utilidadServicio.mostrarAlerta("No se pudo registrar la venta" + mensaje, "Error");
               }
             },
-            error: () => {
-              this._utilidadServicio.mostrarAlerta("Error del servidor", "Error");
+            error: (error) => {
+              let mensaje = error.error?.Message || error.Message || "Error al registrar la venta";
+
+              // Buscar el ID del producto en el mensaje
+              const idProductoMatch = mensaje.match(/ID (\d+)/);
+              if (idProductoMatch) {
+                const idProducto = parseInt(idProductoMatch[1], 10);
+
+                // Buscar el nombre del producto en la lista
+                const producto = this.listaProductos.find(p => p.id === idProducto);
+                if (producto) {
+                  // Reemplazar el ID con el nombre del producto
+                  mensaje = mensaje.replace(`con ID ${idProducto}`, producto.nombre + " " + producto.capacidad + " " + producto.unidad);
+                }
+              }
+
+              // Separar las partes del mensaje para formatearlo
+              const partes = mensaje.match(/^(.*en estado \w+)\. Disponible: (\d+), solicitado: (\d+)/);
+              let htmlMensaje = mensaje; // Fallback en caso de que no coincida el patrón
+
+              if (partes) {
+                htmlMensaje = `
+                ${partes[1]}<br>
+                <strong>Disponible:</strong> ${partes[2]}<br>
+                <strong>Solicitado:</strong> ${partes[3]}`;
+              }
+
+
+              // Mostrar mensaje al cliente en un modal de SweetAlert
+              Swal.fire({
+                title: "Error",
+                html: htmlMensaje,
+                icon: "error",
+                confirmButtonText: "OK",
+              });
+
             }
           });;
         }

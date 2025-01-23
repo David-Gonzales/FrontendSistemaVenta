@@ -36,7 +36,12 @@ export class ModalUsuarioComponent {
     this.formularioUsuario = this.fb.group({
       nombres:['',Validators.required],
       apellidos:['',Validators.required],
-      telefono:['',Validators.required],
+      telefono:['', [
+        Validators.required,
+        Validators.pattern('^[9][0-9]{8}$'),
+        Validators.minLength(9),
+        Validators.maxLength(9)
+      ]],
       correo:['',Validators.required],
       clave:['',Validators.required],
       idRol:['',Validators.required],
@@ -76,6 +81,16 @@ export class ModalUsuarioComponent {
     }
   }
 
+  onTelefonoInputChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+
+    // Elimina cualquier carácter que no sea un número
+    inputElement.value = value.replace(/[^0-9]/g, '');
+
+    // Actualiza la validación para asegurarse de que solo haya 9 caracteres
+    this.formularioUsuario.get('telefono')?.setValue(inputElement.value);
+  }
 
   guardarEditar_Usuario(){
     if(this.datosUsuario != null && this.datosUsuario.id){
