@@ -41,11 +41,11 @@ export class LayoutComponent {
       next: (respuesta)=> {
         if(respuesta.succeeded){
           if (Array.isArray(respuesta.data)) {
+            this._utilidadServicio.guardarSesionMenu(respuesta.data);
             this.listaMenus = respuesta.data.map(menu => {
               if (menu.submenus && menu.submenus.length > 0) {
                 // Si tiene submenús, agregamos 'showSubMenu' con valor inicial false (oculto)
                 menu.showSubMenu = false;
-                this._utilidadServicio.guardarSesionMenu(respuesta.data);
               }
               return menu;
             });
