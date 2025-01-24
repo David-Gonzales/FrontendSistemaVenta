@@ -84,7 +84,8 @@ export class ModalTransaccionComponent {
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
-            this.listaUsuarios = respuesta.data;
+            const lista = respuesta.data;
+            this.listaUsuarios = lista.filter(u => u.esActivo == 1);
           }
           else {
             console.error("La propiedad 'data' no es un arreglo de usuarios.");
@@ -98,7 +99,9 @@ export class ModalTransaccionComponent {
       next: (respuesta) => {
         if (respuesta.succeeded) {
           if (Array.isArray(respuesta.data)) {
-            this.listaProductos = respuesta.data;
+            const lista = respuesta.data;
+            // Filtramos los productos activos y stock mayor a 0
+            this.listaProductos = lista.filter(p => p.esActivo == 1);
           }
           else {
             console.error("La propiedad 'data' no es un arreglo de productos.");

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Sesion } from '../Interfaces/sesion';
+import { Menu } from '../Interfaces/menu';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,16 @@ export class UtilidadService {
     localStorage.setItem("usuario", JSON.stringify(usuarioSesion));
   }
 
+  guardarSesionMenu(menuSesion: Menu){
+    localStorage.setItem("menu", JSON.stringify(menuSesion));
+  }
+
+  obtenerSesionMenu(){
+    const dataCadena = localStorage.getItem("menu");
+    const menu = JSON.parse(dataCadena!) as Menu[];
+    return menu;
+  }
+
   obtenerSesionUsuario(){
     const dataCadena = localStorage.getItem("usuario");
 
@@ -30,5 +41,6 @@ export class UtilidadService {
 
   eliminarSesionUsuario(){
     localStorage.removeItem("usuario");
+    localStorage.removeItem("menu");
   }
 }

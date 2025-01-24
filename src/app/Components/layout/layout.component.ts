@@ -45,6 +45,7 @@ export class LayoutComponent {
               if (menu.submenus && menu.submenus.length > 0) {
                 // Si tiene submenús, agregamos 'showSubMenu' con valor inicial false (oculto)
                 menu.showSubMenu = false;
+                this._utilidadServicio.guardarSesionMenu(respuesta.data);
               }
               return menu;
             });

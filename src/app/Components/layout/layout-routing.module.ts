@@ -11,14 +11,16 @@ import { ClienteComponent } from './Pages/cliente/cliente.component';
 import { ReporteComponent } from './Pages/reporte/reporte.component';
 import { EntradaComponent } from './Pages/inventario/entrada/entrada.component';
 import { SalidaComponent } from './Pages/inventario/salida/salida.component';
+import { LoginGuard } from '../../guards/login.guard';
+import { MenuGuard } from '../../guards/menu.guard';
 
 const routes: Routes = [{
   path:'',
   component:LayoutComponent,
   children:[
-    { path:'dashboard', component:DashBoardComponent },
-    { path:'usuarios', component:UsuarioComponent },
-    { path:'productos', component:ProductoComponent },
+    { path:'dashboard', component:DashBoardComponent, canActivate: [LoginGuard] },
+    { path:'usuarios', component:UsuarioComponent, canActivate: [LoginGuard, MenuGuard] },
+    { path:'productos', component:ProductoComponent, canActivate: [LoginGuard, MenuGuard] },
     {
       path:'inventario',
       children: [
@@ -35,12 +37,13 @@ const routes: Routes = [{
           path: 'salida',
           component: SalidaComponent,    // Este es el componente para la salida
         },
-      ]
+      ],
+      canActivate: [LoginGuard]
     },
-    { path:'venta', component:VentaComponent },
-    { path:'historial-venta', component:HistorialVentaComponent },
-    { path:'clientes', component:ClienteComponent },
-    { path:'reportes', component:ReporteComponent },
+    { path:'venta', component:VentaComponent, canActivate: [LoginGuard, MenuGuard] },
+    { path:'historial-venta', component:HistorialVentaComponent, canActivate: [LoginGuard, MenuGuard] },
+    { path:'clientes', component:ClienteComponent, canActivate: [LoginGuard, MenuGuard] },
+    { path:'reportes', component:ReporteComponent, canActivate: [LoginGuard, MenuGuard] },
 
   ]
 
