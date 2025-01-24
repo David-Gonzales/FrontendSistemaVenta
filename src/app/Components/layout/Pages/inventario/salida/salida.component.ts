@@ -32,6 +32,8 @@ export class SalidaComponent {
 
   mostrarAccordion = false;
 
+  ultimaTransaccionId: number | null = null;
+
   columnasTabla: string[] = ['usuario', 'horaSalida', 'fechaSalida', 'cantidad', 'producto', 'estado', 'acciones'];
 
   listaTransacciones: Transaccion[] = [];
@@ -45,6 +47,22 @@ export class SalidaComponent {
     private _utilidadServicio: UtilidadService,
     private _productoServicio: ProductoService
   ) { }
+
+  obtenerUltimaTransaccion() {
+    this._transaccionServicio.listar().subscribe({
+      next: (respuesta) => {
+        if (respuesta.succeeded && Array.isArray(respuesta.data) && respuesta.data.length > 0) {
+          // Ordenar las transacciones por Id descendente y obtener la primera (última)
+          // const ultimaTransaccion = respuesta.data.sort((a: Transaccion, b: Transaccion) => b.id - a.id)[0];
+          const ultimaTransaccion = respuesta.data[0];
+          this.ultimaTransaccionId = ultimaTransaccion.id; // Guardar el ID de la última transacción
+        }
+      },
+      error: () => {
+        this._utilidadServicio.mostrarAlerta("Error al obtener la última transacción", "Error");
+      }
+    });
+  }
 
   obtenerSalidas() {
     const pageNumber = this.pageIndex + 1;
@@ -103,6 +121,7 @@ export class SalidaComponent {
 
   ngOnInit(): void {
     this.obtenerSalidas();
+    this.obtenerUltimaTransaccion();
     this.obtenerStockProductos();
   }
 
@@ -124,7 +143,10 @@ export class SalidaComponent {
       disableClose: true
     }).afterClosed().subscribe({
       next: (resultado) => {
-        if (resultado === "true") this.obtenerSalidas();
+        if (resultado === "true"){
+          this.obtenerSalidas();
+          window.location.reload();
+        }
       },
       error: (error) => { }
     });
@@ -136,7 +158,10 @@ export class SalidaComponent {
         data: transaccion
 
       }).afterClosed().subscribe(resultado => {
-        if(resultado === "true") this.obtenerSalidas();
+        if(resultado === "true"){
+          this.obtenerSalidas();
+          window.location.reload();
+        }
       });
     }
 
